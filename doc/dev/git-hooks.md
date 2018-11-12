@@ -16,6 +16,14 @@ For automating this check we are currently using a fork of Google's own GitHub l
 The pre-commit hook should be found in this folder under the same name. 
 The guide used for creating the hook can be found [here](https://medium.com/@shettyrahul8june/how-to-run-eslint-using-pre-commit-hook-25984fbce17e).
 
-As a quick guide for setting up the hook:
-1. Copy the `pre-commit` file to `.git/hooks/`
-2. Make it executable with the following command: `chmod +x .git/hooks/pre-commit`
+
+### Pre-push
+
+The hook for pre-pushing is used to ensure that each member does not accidentally push to the `master` branch.
+
+
+### General
+
+As a quick guide for setting up hooks:
+1. Copy the wanted hook file to `.git/hooks/`
+2. Make it executable with the following command: `chmod +x .git/hooks/<hook-name>`
