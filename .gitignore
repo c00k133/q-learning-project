@@ -36,3 +36,17 @@ venv/
 *.exe
 *.out
 *.app
+
+
+## The following .gitignore is taken from the following link:
+#       https://github.com/github/gitignore/blob/master/CMake.gitignore
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
