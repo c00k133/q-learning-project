@@ -2,6 +2,11 @@
 venv/
 .envrc
 
+# Ignore everything related to CLion
+.idea/
+cmake*/
+
+
 ## The following .gitignore is taken from the following link:
 #       https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
 
