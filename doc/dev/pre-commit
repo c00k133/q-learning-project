@@ -9,8 +9,13 @@ if [[ "$?" == 1 ]]; then
     exit 1
 fi
 
-# Actually run cpplint
-if ! cpplint --recursive src; then
+## Actually run cpplint
+
+# Get all files to check
+files=($(find src/ -name '*.?pp' | grep --invert-match "src/libs/*"))
+
+# Run cpplint
+if ! cpplint ${files}; then
     echo
     echo "cpplint did not pass!"
     echo
