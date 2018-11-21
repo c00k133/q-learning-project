@@ -1,5 +1,6 @@
 # Ignore virtualenv used for cpplint
 venv/
+.DS_Store
 
 ## The following .gitignore is taken from the following link:
 #       https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
