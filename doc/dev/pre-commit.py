@@ -25,3 +25,5 @@ cpplint_files = [f for f in commiting_files if f.endswith(cpplint_include)]
 if len(cpplint_files):
     sys.argv = [''] + cpplint_files  # Include empty first string
     sys.exit(cpplint.main())
+
+print('DONE')
