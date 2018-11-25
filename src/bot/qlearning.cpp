@@ -53,3 +53,39 @@ double QLearning::getMaxActionValue() {
 
   return current_max;
 }
+
+inline double QLearning::qValueBounded(
+    unsigned int index,
+    double else_value,
+    double lower_bound
+) {
+  double tmp = q_matrix[state][index];
+  return tmp <= lower_bound ? else_value : tmp;
+}
+
+int QLearning::getRandomAction(float curiosity) {
+  double sum = 0.0;
+  for (unsigned int i = 0; i < actions; i++) {
+    sum += qValueBounded(i, curiosity);
+  }
+
+  double ratio = accuracy / sum;
+  int count = (int) (ratio * qValueBounded(0, curiosity));
+  int random = rand() % accuracy;
+
+  int choose = 0;
+  for (unsigned int i = 0; i < actions; i++) {
+    if (random < count) {
+      choose = i;
+      break;
+    } else {
+      count += (int) (ratio * qValueBounded(i + 1, curiosity));
+    }
+  }
+
+  return choose;
+};
+
+void QLearning::updateMatrix(float reward) {
+  // TODO(cookie): flesh out
+}
