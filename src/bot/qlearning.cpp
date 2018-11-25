@@ -8,8 +8,9 @@
 QLearning::QLearning(
         unsigned int states,
         unsigned int actions,
-        int step
-) : states(states), actions(actions), step(step) {
+        int step,
+        double gamma
+) : states(states), actions(actions), step(step), gamma(gamma) {
   q_matrix =
     std::vector<std::vector<double>>(states, std::vector<double>(actions, 0.0));
 
@@ -42,7 +43,7 @@ int QLearning::calculateBestAction() {
   return current_best;
 }
 
-double QLearning::getMaxActionValue() {
+double QLearning::getMaxActionValue(int state) {
   double current_max = 0.0;
 
   for (unsigned int i = 0; i < actions; i++) {
@@ -70,22 +71,28 @@ int QLearning::getRandomAction(float curiosity) {
   }
 
   double ratio = accuracy / sum;
-  int count = (int) (ratio * qValueBounded(0, curiosity));
+  int count = static_cast<int>(ratio * qValueBounded(0, curiosity));
   int random = rand() % accuracy;
 
-  int choose = 0;
+  unsigned int choose = 0;
   for (unsigned int i = 0; i < actions; i++) {
     if (random < count) {
       choose = i;
       break;
     } else {
-      count += (int) (ratio * qValueBounded(i + 1, curiosity));
+      count += static_cast<int>(ratio * qValueBounded(i + 1, curiosity));
     }
   }
 
   return choose;
-};
+}
+
+inline double QLearning::calculateNewValue(float reward, double max_q) {
+  return reward - move_reward + gamma * max_q - q_matrix[state][future_action];
+}
 
 void QLearning::updateMatrix(float reward) {
-  // TODO(cookie): flesh out
+  double max_q = getMaxActionValue(future_state);
+
+  double calculate_value = calculateNewValue(reward, max_q);
 }
