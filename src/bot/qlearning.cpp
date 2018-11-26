@@ -8,18 +8,13 @@
 QLearning::QLearning(
         unsigned int states,
         unsigned int actions,
-        int step,
         double gamma
-) : states(states), actions(actions), step(step), gamma(gamma) {
+) : states(states), actions(actions), gamma(gamma) {
   q_matrix =
     std::vector<std::vector<double>>(states, std::vector<double>(actions, 0.0));
 
   // Set RNG for later use
   srand((unsigned) time(nullptr));
-}
-
-void QLearning::act(float curiosity) {
-  // TODO(Cookie): flesh out when rest of the class is implemented
 }
 
 float QLearning::setReward(float changeAmount) {
@@ -93,6 +88,8 @@ inline double QLearning::calculateNewValue(float reward, double max_q) {
 
 void QLearning::updateMatrix(float reward) {
   double max_q = getMaxActionValue(future_state);
-
   double calculate_value = calculateNewValue(reward, max_q);
+
+  // Update the matrix
+  q_matrix[state][future_action] += calculate_value;
 }

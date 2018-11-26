@@ -4,12 +4,12 @@
 
 
 
-class Bot {
+class BotBody {
 public:
     
 };
 
-class Worm : public Bot{
+class WormBody : public BotBody {
 public:
     Worm(std::list<int> list) : angles_(list) {}
     
