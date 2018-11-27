@@ -17,6 +17,10 @@ QLearning::QLearning(
   srand((unsigned) time(nullptr));
 }
 
+int QLearning::getState() const {
+  return state;
+}
+
 float QLearning::setReward(float changeAmount) {
   float change = move_reward + changeAmount;
   // Bounds check for change: 0.0 <= move_reward <= 10.0

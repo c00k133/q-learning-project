@@ -23,6 +23,12 @@ class QLearning {
             double gamma);
 
     /**
+     * Getter for current state of this Q object.
+     * @return current state of this Q object
+     */
+     int getState() const;
+
+    /**
      * Setter for move reward.
      * @param changeAmount new move reward
      * @return the update move reward

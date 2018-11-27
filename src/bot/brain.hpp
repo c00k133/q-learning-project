@@ -9,19 +9,40 @@
  */
 class BotBrain {
  public:
-   BotBrain(
+    BotBrain(
        BotBody body,
-       QLearning qLearning
-       ) : body(body), qLearning(qLearning);
+       QLearning qLearning) : body(body), qLearning(qLearning) {}
 
- private:
-   BotBody body;
-   QLearning qLearning;
+ protected:
+    BotBody body;
+    QLearning qLearning;
 };
 
-class WormBrain : BotBrain {
+class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
  public:
-   WormBrain(WormBody body, QLearning qLearning) : BotBrain(body, qLearning);
+    WormBrain(
+       WormBody body,
+       QLearning qLearning,
+       int precision,
+       float max_error);
+
+    void process();
+
+ private:
+    int updateState(int state, int action);
+    void act(int dir = 1, float curiosity = 0.1f);
+    bool checkAllAngles() const;
+
+    double rotate_size;
+    double maximum_error;
+
+    int precision;
+    int count;
+
+    int next_action = 0;
+    int next_state = 0;
+    int next_joint = 0;
+    int next_rotation = 0;
 };
 
 #endif  // Q_LEARNING_BRAIN_HPP

@@ -1,22 +1,22 @@
-#include "bot.hpp"
+#include "body.hpp"
 
-int get_angle(int num) {
+
+int WormBody::get_angle(int num) {
   auto it = angles_.begin();
   for (int i = 0; i < num; i ++) {it++;}
   return *it;
 }
 
-void increase_angle(int num) {
+void WormBody::increase_angle(int num) {
   auto it = angles_.begin();
   for (int i = 0; i < num; i ++) {it++;}
   *it += 10;
-  count_ ++;
+  count_++;
 }
 
-void decrease_angle(int num) {
+void WormBody::decrease_angle(int num) {
   auto it = angles_.begin();
   for (int i = 0; i < num; i ++) {it++;}
   *it -= 10;
-  count_ ++;
+  count_++;
 }
-
