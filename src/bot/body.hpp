@@ -5,7 +5,10 @@
 #include <list>
 
 
-class BotBody {};
+class BotBody {
+ public:
+    virtual ~BotBody() = default;
+};
 
 class WormBody : public BotBody {
  public:

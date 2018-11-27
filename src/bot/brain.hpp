@@ -12,6 +12,7 @@ class BotBrain {
     BotBrain(
        BotBody body,
        QLearning qLearning) : body(body), qLearning(qLearning) {}
+    virtual ~BotBrain() = default;
 
  protected:
     BotBody body;
