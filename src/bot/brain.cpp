@@ -26,7 +26,7 @@ unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   int new_angle = (old_angle + change < 0 ?
     precision + (old_angle + change) : old_angle + change) % precision;
 
-  auto return_state =static_cast<unsigned int>(
+  auto return_state = static_cast<unsigned int>(
       state + (new_angle - old_angle) * precision_joint);
   return return_state;
 }
@@ -39,7 +39,8 @@ void WormBrain::act(int dir, float curiosity) {
 }
 
 bool WormBrain::inspectAngle(unsigned int index, double change) const {
-  double diff = 0.0 - change;  // TODO(Cookie): wait for implementation of getJoints
+  // TODO(Cookie): wait for implementation of getJoints
+  double diff = 0.0 - change;
   return diff > maximum_error || diff < -maximum_error;
 }
 
