@@ -13,6 +13,10 @@ WormBrain::WormBrain(
   maximum_error = rotate_size / max_error;
 }
 
+int WormBrain::getCount() {
+  return count;
+}
+
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   int change = -1 + (2 * (action % 2));
   unsigned int joint = (action + 1) / 2 - 1;
@@ -31,11 +35,12 @@ unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   return return_state;
 }
 
-void WormBrain::act(int dir, float curiosity) {
-  next_action = dir == 0 ?
-    qLearning.calculateBestAction() : qLearning.getRandomAction(curiosity);
+void WormBrain::act(bool random, float curiosity) {
+  next_action = random ?
+    qLearning.getRandomAction(curiosity) : qLearning.calculateBestAction();
 
-  qLearning.setFutureState(updateState(qLearning.getState(), next_action));
+  unsigned int new_state = updateState(qLearning.getState(), next_action);
+  qLearning.setFutureState(new_state);
 }
 
 bool WormBrain::inspectAngle(unsigned int index, double change) const {
@@ -50,7 +55,7 @@ void WormBrain::process() {
   current_body_position_x = wormPositionX;
 
   qLearning.updateMatrix(reward, next_action);
-  act(0, 0.1f);
+  act(false);
 
   double joint_angle_change = rotate_size * next_rotation;
   bool valid = inspectAngle(next_joint, joint_angle_change);
