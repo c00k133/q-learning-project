@@ -17,8 +17,12 @@ QLearning::QLearning(
   srand((unsigned) time(nullptr));
 }
 
-int QLearning::getState() const {
+unsigned int QLearning::getState() const {
   return state;
+}
+
+int QLearning::getAccuracy() const {
+  return accuracy;
 }
 
 float QLearning::setReward(float changeAmount) {
@@ -28,8 +32,12 @@ float QLearning::setReward(float changeAmount) {
   return move_reward;
 }
 
-int QLearning::calculateBestAction() {
-  int current_best = 0;
+void QLearning::setFutureState(unsigned int state) {
+  future_state = state;
+}
+
+unsigned int QLearning::calculateBestAction() {
+  unsigned int current_best = 0;
   double current_max = q_matrix[state][current_best];
 
   for (unsigned int i = 1; i < actions; i++) {
@@ -63,7 +71,7 @@ inline double QLearning::qValueBounded(
   return tmp <= lower_bound ? else_value : tmp;
 }
 
-int QLearning::getRandomAction(float curiosity) {
+unsigned int QLearning::getRandomAction(float curiosity) {
   double sum = 0.0;
   for (unsigned int i = 0; i < actions; i++) {
     sum += qValueBounded(i, curiosity);
@@ -86,14 +94,18 @@ int QLearning::getRandomAction(float curiosity) {
   return choose;
 }
 
-inline double QLearning::calculateNewValue(float reward, double max_q) {
-  return reward - move_reward + gamma * max_q - q_matrix[state][future_action];
+inline double QLearning::calculateNewValue(
+    float reward,
+    double max_q,
+    unsigned int next_action
+) {
+  return reward - move_reward + gamma * max_q - q_matrix[state][next_action];
 }
 
-void QLearning::updateMatrix(float reward) {
+void QLearning::updateMatrix(float reward, unsigned int next_action) {
   double max_q = getMaxActionValue(future_state);
-  double calculate_value = calculateNewValue(reward, max_q);
+  double calculate_value = calculateNewValue(reward, max_q, next_action);
 
   // Update the matrix
-  q_matrix[state][future_action] += calculate_value;
+  q_matrix[state][next_action] += calculate_value;
 }

@@ -13,6 +13,7 @@ class BotBrain {
        BotBody body,
        QLearning qLearning) : body(body), qLearning(qLearning) {}
     virtual ~BotBrain() = default;
+    virtual void process() = 0;
 
  protected:
     BotBody body;
@@ -27,12 +28,14 @@ class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
        int precision,
        float max_error);
 
-    void process();
+    void process() override;
 
  private:
-    int updateState(int state, int action);
+    unsigned int updateState(unsigned int state, unsigned int action);
     void act(int dir = 1, float curiosity = 0.1f);
-    bool checkAllAngles() const;
+    bool inspectAngle(unsigned int index, double change = 0) const;
+
+    float current_body_position_x = 0.0f;
 
     double rotate_size;
     double maximum_error;
@@ -40,10 +43,9 @@ class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
     int precision;
     int count;
 
-    int next_action = 0;
-    int next_state = 0;
-    int next_joint = 0;
     int next_rotation = 0;
+    unsigned int next_action = 0;
+    unsigned int next_joint = 0;
 };
 
 #endif  // Q_LEARNING_BRAIN_HPP

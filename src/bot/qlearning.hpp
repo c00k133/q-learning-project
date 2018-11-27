@@ -26,7 +26,8 @@ class QLearning {
      * Getter for current state of this Q object.
      * @return current state of this Q object
      */
-     int getState() const;
+     unsigned int getState() const;
+     int getAccuracy() const;
 
     /**
      * Setter for move reward.
@@ -34,13 +35,14 @@ class QLearning {
      * @return the update move reward
      */
     float setReward(float changeAmount);
+    void setFutureState(unsigned int state);
 
     /**
      * Calculates the best action in the Q-matrix in the current state.
      * I.e. the largest value in the Q-matrix.
      * @return the best current action
      */
-    int calculateBestAction();
+    unsigned int calculateBestAction();
     /**
      * Get the current best action of the algorithm for a certain state.
      * I.e. get the largest value from the Q-matrix for a state.
@@ -52,13 +54,13 @@ class QLearning {
      * @param curiosity substitute for Q-values <= 0
      * @return random action from the Q-matrix
      */
-    int getRandomAction(float curiosity = 0.1f);
+    unsigned int getRandomAction(float curiosity = 0.1f);
 
     /**
      * Update the Q matrix with a certain reward in mind.
      * @param reward the reward to address in updating
      */
-    void updateMatrix(float reward);
+    void updateMatrix(float reward, unsigned int next_action);
 
  private:
     /**
@@ -80,7 +82,10 @@ class QLearning {
      * @param max_q maximum value of Q matrix, calculated separately
      * @return the newly calculate value
      */
-    inline double calculateNewValue(float reward, double max_q);
+    inline double calculateNewValue(
+        float reward,
+        double max_q,
+        unsigned int next_action);
 
     unsigned int states;  // Number of states; number of matrix columns
     unsigned int actions;  // Number of actions; number of matrix rows
@@ -88,7 +93,6 @@ class QLearning {
 
     unsigned int state = 0;  // Current state of this Q-algorithm
     unsigned int future_state = 0;  // Next state to take in future iteration
-    unsigned int future_action = 0;  // Next action to take in future iteration
 
     float move_reward = 0.1f;  // Reward for moving, default to 0.1f
     double gamma;  // Gamma value used in Q calculation, range 0.0 - 1.0
