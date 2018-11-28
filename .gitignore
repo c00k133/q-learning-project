@@ -1,5 +1,13 @@
 # Ignore virtualenv used for cpplint
 venv/
+.envrc
+
+# Ignore everything related to CLion
+.idea/
+cmake*/
+
+# Ignore environmental configs from MacOS
+.DS_Store
 
 ## The following .gitignore is taken from the following link:
 #       https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
