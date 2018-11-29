@@ -32,9 +32,9 @@ void QSFMLWidget::showEvent(QShowEvent*)
         #endif
 
         // Create the SFML window with the widget handle
-        //Create(winId());
-        RenderWindow::create(winId());
-        //this->createWinId();
+        sf::Window::create(static_cast<sf::WindowHandle>(winId()));
+
+
         // Let the derived class do its specific stuff
         OnInit();
 
@@ -50,17 +50,14 @@ QPaintEngine* QSFMLWidget::paintEngine() const
 {
     return nullptr;
 }
-
+//Notify the derived class that a refresh is about to be performed
 void QSFMLWidget::paintEvent(QPaintEvent*)
 {
-    //clear();
-    //RenderWindow::clear();
     // Let the derived class do its specific stuff
     OnUpdate();
 
     // Display on screen
     //Display();
-    //display();
-    sf::RenderWindow::display();
+    display();
 
 }

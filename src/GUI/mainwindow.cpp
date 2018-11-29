@@ -6,8 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    MyCanvas* SFMLView = new MyCanvas(this->ui->frame, QPoint(20, 20), QSize(360, 360));
+    MyCanvas* SFMLView = new MyCanvas(ui->frame, QPoint(0, 0), QSize(800, 800));
     SFMLView->show();
 }
 
@@ -15,3 +14,4 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+

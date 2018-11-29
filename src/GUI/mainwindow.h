@@ -11,6 +11,7 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
+  //Macro that tells the pre-compiler that this class has gui elements
     Q_OBJECT
 
 public:
@@ -18,6 +19,7 @@ public:
     ~MainWindow();
 
 private:
+    //Access all widgets in the window using this object
     Ui::MainWindow *ui;
 };
 

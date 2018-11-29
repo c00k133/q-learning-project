@@ -16,16 +16,18 @@
 class QSFMLWidget : public QWidget, public sf::RenderWindow
 {
 public :
+    //QSFMLWidget constructor:
+    explicit QSFMLWidget(QWidget* Parent, const QPoint& Position, const QSize& Size, int FrameTime = 0);
 
-    QSFMLWidget(QWidget* Parent, const QPoint& Position, const QSize& Size, int FrameTime = 0);
-
-    virtual ~QSFMLWidget();
+    ~QSFMLWidget();
 
 private :
 
-    virtual void OnInit()=0;
+    //member function that will be overridden
+    virtual void OnInit() = 0;
 
-    virtual void OnUpdate()=0;
+    //member function that will be overridden
+    virtual void OnUpdate() = 0;
 
     virtual QPaintEngine* paintEngine() const;
 
