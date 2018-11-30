@@ -6,7 +6,7 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 time_step_) {
   time_step = 1.0f / time_step_;
 
   // Define the gravity vector
-  b2Vec2 gravity = b2Vec2(0.0f, GRAVITATIONAL_FORCE);
+  b2Vec2 gravity = b2Vec2(0.0f, gravitational_force);
   // Construct a world object, which will hold and simulate the rigid bodies
   world = new b2World(gravity);
 

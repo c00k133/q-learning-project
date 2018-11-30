@@ -4,9 +4,6 @@
 #include "Box2D/Box2D.h"
 
 
-// TODO(Cookie): check if this should be a const variable instead
-#define GRAVITATIONAL_FORCE -9.81f
-
 class PhysicsEngine {
  public:
     explicit PhysicsEngine(float world_pos = -10.0f, float32 time_step = 60.0f);
@@ -26,6 +23,7 @@ class PhysicsEngine {
     float32 time_step;
     static constexpr int32 velocity_iterations = 6;
     static constexpr int32 position_iterations = 2;
+    static constexpr float gravitational_force = -9.81f;
 };
 
 #endif  // Q_LEARNING_PHYSICS_HPP
