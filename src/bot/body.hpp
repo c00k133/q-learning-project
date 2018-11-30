@@ -4,10 +4,13 @@
 #include <iostream>
 #include <list>
 
+#include "Box2D/Box2D.h"
+
 
 class BotBody {
  public:
-    virtual ~BotBody() = default;
+    ~BotBody() = default;
+    virtual b2Body* createB2Body(b2World* world) const = 0;
 };
 
 class WormBody : public BotBody {
@@ -19,24 +22,29 @@ class WormBody : public BotBody {
      * @param list list of angles
      * @param len length between joint
      */
-    WormBody(std::list<int> list, int len) : angles_(list) , len_(len) {}
+    WormBody(std::list<int> list, int len = 1);
 
-    int get_len() {return len_;}
+    b2Body* createB2Body(b2World* world) const override;
 
-    unsigned long get_joint_amount() {return angles_.size();}
-    unsigned int get_count() {return count_;}
+    int get_len() const;
+    int get_angle(int num) const;
+    unsigned long get_joint_amount() const;
+    unsigned int get_count() const;
 
-    const std::list<int> get_all_angles() {return angles_;}
-
-    int get_angle(int num);
+    const std::list<int> get_all_angles() const;
 
     void increase_angle(int num);
     void decrease_angle(int num);
 
  private:
+    b2Body* createBone(b2World* world) const;
+
     std::list<int> angles_;
-    int len_ = 1;
+    int len_;
     unsigned int count_ = 0;
+
+    static constexpr float bone_width = 0.5f;
+    static constexpr float bone_length = 2.0f;
 };
 
 #endif

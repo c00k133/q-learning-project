@@ -8,7 +8,8 @@ WormBrain::WormBrain(
         WormBody body,
         QLearning qLearning,
         int precision,
-        float max_error): BotBrain(body, qLearning), precision(precision) {
+        float max_error
+): body(body), qLearning(qLearning), precision(precision) {
   rotate_size = 2.0 * M_PI / precision;
   maximum_error = rotate_size / max_error;
 }
