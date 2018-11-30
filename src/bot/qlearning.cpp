@@ -32,6 +32,10 @@ float QLearning::setReward(float changeAmount) {
   return move_reward;
 }
 
+float QLearning::getReward() const {
+  return move_reward;
+}
+
 void QLearning::setFutureState(unsigned int state) {
   future_state = state;
 }
@@ -50,7 +54,7 @@ unsigned int QLearning::calculateBestAction() {
   return current_best;
 }
 
-double QLearning::getMaxActionValue(int state) {
+double QLearning::getMaxActionValue(unsigned int state) {
   double current_max = 0.0;
 
   for (unsigned int i = 0; i < actions; i++) {
@@ -108,4 +112,7 @@ void QLearning::updateMatrix(float reward, unsigned int next_action) {
 
   // Update the matrix
   q_matrix[state][next_action] += calculate_value;
+
+  // Update state
+  state = future_state;
 }

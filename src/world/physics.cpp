@@ -2,7 +2,9 @@
 #include "Box2D/Box2D.h"
 
 
-PhysicsEngine::PhysicsEngine(float world_pos) {
+PhysicsEngine::PhysicsEngine(float world_pos, float32 time_step_) {
+  time_step = 1.0f / time_step_;
+
   // Define the gravity vector
   b2Vec2 gravity = b2Vec2(0.0f, GRAVITATIONAL_FORCE);
   // Construct a world object, which will hold and simulate the rigid bodies
@@ -29,4 +31,16 @@ PhysicsEngine::PhysicsEngine(float world_pos) {
 
 b2World* PhysicsEngine::getWorld() {
   return world;
+}
+
+float32 PhysicsEngine::getTimeStep() const {
+  return time_step;
+}
+
+void PhysicsEngine::setTimeStep(float32 new_time_step) {
+  time_step = new_time_step;
+}
+
+void PhysicsEngine::step() {
+  world->Step(time_step, velocity_iterations, position_iterations);
 }

@@ -1,43 +1,49 @@
-#include <list>
+#include <vector>
 
 #include "body.hpp"
 #include "Box2D/Box2D.h"
 
 
-WormBody::WormBody(std::list<int> list, int len) : angles_(list), len_(len) {}
+WormBody::WormBody(
+        std::vector<int> list,
+        unsigned int len
+) : angles(list), len(len) {}
 
 void WormBody::increase_angle(int num) {
-  auto it = angles_.begin();
-  for (int i = 0; i < num; i ++) {it++;}
-  *it += 10;
-  count_++;
+  change_angle(num, angle_change);
 }
 
 void WormBody::decrease_angle(int num) {
-  auto it = angles_.begin();
-  for (int i = 0; i < num; i ++) {it++;}
-  *it -= 10;
-  count_++;
+  change_angle(num, -angle_change);
 }
 
-int WormBody::get_len() const {
-  return len_;
+void WormBody::change_angle(int num, int change) {
+  angles[num] += change;
+  count++;
 }
 
-int WormBody::get_angle(int num) const {
-  return 0;
+int WormBody::getAngleChange() const {
+  return angle_change;
+}
+
+unsigned int WormBody::get_len() const {
+  return len;
+}
+
+int WormBody::get_angle(unsigned int num) const {
+  return angles[num];
 }
 
 unsigned long WormBody::get_joint_amount() const {
-  return angles_.size();
+  return angles.size();
 }
 
 unsigned int WormBody::get_count() const {
-  return count_;
+  return count;
 }
 
-const std::list<int> WormBody::get_all_angles() const {
-  return angles_;
+const std::vector<int> WormBody::get_all_angles() const {
+  return angles;
 }
 
 b2Body* WormBody::createB2Body(b2World* world) const {

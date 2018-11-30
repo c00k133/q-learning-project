@@ -2,7 +2,7 @@
 #define Q_LEARNING_BODY_HPP
 
 #include <iostream>
-#include <list>
+#include <vector>
 
 #include "Box2D/Box2D.h"
 
@@ -22,29 +22,34 @@ class WormBody : public BotBody {
      * @param list list of angles
      * @param len length between joint
      */
-    WormBody(std::list<int> list, int len = 1);
+    explicit WormBody(std::vector<int> list, unsigned int len = 1);
 
     b2Body* createB2Body(b2World* world) const override;
 
-    int get_len() const;
-    int get_angle(int num) const;
+    unsigned int get_len() const;
+    int get_angle(unsigned int num) const;
     unsigned long get_joint_amount() const;
     unsigned int get_count() const;
 
-    const std::list<int> get_all_angles() const;
+    /* Used for testing purposes */
+    int getAngleChange() const;
+
+    const std::vector<int> get_all_angles() const;
 
     void increase_angle(int num);
     void decrease_angle(int num);
 
  private:
     b2Body* createBone(b2World* world) const;
+    void change_angle(int num, int change);
 
-    std::list<int> angles_;
-    int len_;
-    unsigned int count_ = 0;
+    std::vector<int> angles;
+    unsigned int len;
+    unsigned int count = 0;
 
     static constexpr float bone_width = 0.5f;
     static constexpr float bone_length = 2.0f;
+    static constexpr int angle_change = 10;
 };
 
 #endif
