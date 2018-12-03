@@ -50,7 +50,7 @@ public:
         MainWindow->setBaseSize(QSize(300, 300));
         actionExit = new QAction(MainWindow);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
-        actionExit->setShortcutVisibleInContextMenu(false);
+//        actionExit->setShortcutVisibleInContextMenu(false);
         actionno_attributes_yet = new QAction(MainWindow);
         actionno_attributes_yet->setObjectName(QString::fromUtf8("actionno_attributes_yet"));
         actionno_sound_implemented = new QAction(MainWindow);
