@@ -10,41 +10,33 @@
 class BotBody {
  public:
     ~BotBody() = default;
-    virtual b2Body* createB2Body(b2World* world) const = 0;
 };
 
 class WormBody : public BotBody {
  public:
     /**
      * WormBody constructor.
-     * Take a list of angles and the length between joints for the worm as
-     * parameters.
-     * @param list list of angles
-     * @param len length between joint
+     * @param bone_amount amount of bones in this worm, minimum 1
      */
-    explicit WormBody(std::vector<int> list, unsigned int len = 1);
+    explicit WormBody(unsigned int bone_amount = 3);
+    WormBody(b2World* world, unsigned int bone_amount = 3);
 
-    b2Body* createB2Body(b2World* world) const override;
-
-    unsigned int get_len() const;
-    int get_angle(unsigned int num) const;
-    unsigned long get_joint_amount() const;
-    unsigned int get_count() const;
+    unsigned int getBoneAmount() const;
+    unsigned int getCount() const;
 
     /* Used for testing purposes */
     int getAngleChange() const;
 
-    const std::vector<int> get_all_angles() const;
-
-    void increase_angle(int num);
-    void decrease_angle(int num);
+    void createBodyParts(b2World* world);
 
  private:
+    void init(unsigned int bone_amount);
     b2Body* createBone(b2World* world) const;
-    void change_angle(int num, int change);
 
-    std::vector<int> angles;
-    unsigned int len;
+    std::vector<b2Joint*> joints;
+    std::vector<b2Body*> bones;
+
+    unsigned int bone_amount;
     unsigned int count = 0;
 
     static constexpr float bone_width = 0.5f;

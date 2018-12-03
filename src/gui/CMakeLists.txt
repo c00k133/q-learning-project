@@ -1,4 +1,8 @@
-FIND_PACKAGE(SFML 2.5 COMPONENTS graphics audio REQUIRED)
+SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/libs")
+FIND_PACKAGE(SFML REQUIRED system window graphics network audio)
+IF(SFML_FOUND)
+    INCLUDE_DIRECTORIES(${SFML_INCLUDE_DIR})
+ENDIF()
 
 # Find includes in corresponding build directories
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -27,8 +31,9 @@ TARGET_LINK_LIBRARIES(q-learningGUI
         Qt5::Widgets
         Qt5::Core
         Qt5::Network
-        sfml-graphics
-        sfml-audio
+        ${SFML_LIBRARIES}
+#        sfml-graphics
+#        sfml-audio
 )
 
 GET_TARGET_PROPERTY(QtCore_location Qt5::Core LOCATION)

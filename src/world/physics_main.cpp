@@ -14,8 +14,7 @@ int main(int argc, char** argv) {
   PhysicsEngine engine = PhysicsEngine();
   b2World* world = engine.getWorld();
 
-  std::vector<int> angles = std::vector<int>(0, 0);
-  WormBody worm = WormBody(angles, 5);
+  WormBody worm;
   b2Body* worm_body = worm.createB2Body(world);
 
   // This is our little game loop

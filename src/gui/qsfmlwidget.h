@@ -19,7 +19,7 @@ public :
     //QSFMLWidget constructor:
     explicit QSFMLWidget(QWidget* Parent, const QPoint& Position, const QSize& Size, int FrameTime = 0);
 
-    ~QSFMLWidget();
+    ~QSFMLWidget() = default;
 
 private :
 

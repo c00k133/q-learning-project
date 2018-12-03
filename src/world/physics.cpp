@@ -29,8 +29,16 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 time_step_) {
   ground_body->CreateFixture(&ground_box, 0.0f);
 }
 
-b2World* PhysicsEngine::getWorld() {
+PhysicsEngine::~PhysicsEngine() {
+  delete world;
+}
+
+b2World* PhysicsEngine::getWorld() const {
   return world;
+}
+
+b2Body* PhysicsEngine::getGround() const {
+  return ground_body;
 }
 
 float32 PhysicsEngine::getTimeStep() const {
