@@ -23,8 +23,7 @@ WormBody::WormBody(unsigned int bone_amount) : bone_amount(bone_amount) {
 WormBody::WormBody(
         b2World* world,
         unsigned int bone_amount) :
-        bone_amount(bone_amount)
-{
+        bone_amount(bone_amount) {
   init(bone_amount);
   createBodyParts(world);
 }
