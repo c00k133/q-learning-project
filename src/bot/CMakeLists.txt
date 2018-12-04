@@ -4,4 +4,10 @@ ADD_LIBRARY(BotBrain brain.cpp)
 
 ADD_EXECUTABLE(bot main.cpp)
 
-#TARGET_LINK_LIBRARIES(bot)
+TARGET_LINK_LIBRARIES(bot
+        QLearning
+        BotBody
+        BotBrain
+        QLearningException
+        BodyExceptions
+)
