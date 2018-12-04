@@ -46,4 +46,6 @@ INCLUDE_DIRECTORIES(
         "${source_dir}/googlemock/include"
 )
 
-ADD_SUBDIRECTORY(example)
+ADD_LIBRARY(TestUtils test_utils.cpp)
+
+ADD_SUBDIRECTORY(bottest)

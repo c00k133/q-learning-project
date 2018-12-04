@@ -35,6 +35,18 @@ class QLearning {
      * @return the update move reward
      */
     float setReward(float changeAmount);
+
+    /**
+     * Getter for move reward.
+     * Currently used for testing.
+     * @return current move reward
+     */
+    float getReward() const;
+
+    /**
+     * Setter for future state.
+     * @param state new future state
+     */
     void setFutureState(unsigned int state);
 
     /**
@@ -48,7 +60,7 @@ class QLearning {
      * I.e. get the largest value from the Q-matrix for a state.
      * @return current best action in whole Q-matrix for a certain state
      */
-    double getMaxActionValue(int state);
+    double getMaxActionValue(unsigned int state);
     /**
      * Get a random action from the Q-matrix.
      * @param curiosity substitute for Q-values <= 0

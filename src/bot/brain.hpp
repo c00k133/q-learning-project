@@ -4,36 +4,40 @@
 #include "body.hpp"
 #include "qlearning.hpp"
 
-/**
- * Abstract class Brain: represents the brains of bots.
- */
-class BotBrain {
- public:
-    /**
-     * BotBrain constructor.
-     * Needs a body to control and a Q learning object to calculate optimal
-     * steps with.
-     * @param body controlled bot body
-     * @param qLearning queried Q learning object
-     */
-    BotBrain(
-       BotBody body,
-       QLearning qLearning) : body(body), qLearning(qLearning) {}
-
-    /** Virtual destructor for showcasing abstractness of class. */
-    virtual ~BotBrain() = default;
-
-    /**
-     * This is the method called each time the brain should "think".
-     * The method queries the Q learning object for advice on how to move the
-     * body.
-     */
-    virtual void process() = 0;
-
- protected:
-    BotBody body;  // Bot body object
-    QLearning qLearning;  // Q learning object
-};
+///**
+// * Abstract class Brain: represents the brains of bots.
+// */
+//class BotBrain {
+// public:
+//    /**
+//     * BotBrain constructor.
+//     * Needs a body to control and a Q learning object to calculate optimal
+//     * steps with.
+//     * @param body controlled bot body
+//     * @param qLearning queried Q learning object
+//     */
+//    BotBrain(
+//       BotBody* body_,
+//       QLearning* qLearning_
+//    ) {
+//       body = body_;
+//       qLearning = qLearning_;
+//    }
+//
+//    /** Virtual destructor for showcasing abstractness of class. */
+//    virtual ~BotBrain() = default;
+//
+//    /**
+//     * This is the method called each time the brain should "think".
+//     * The method queries the Q learning object for advice on how to move the
+//     * body.
+//     */
+//    virtual void process() = 0;
+//
+// protected:
+//    BotBody* body;  // Bot body object
+//    QLearning* qLearning;  // Q learning object
+//};
 
 /**
  * Class WormBrain: represents the brains of our first movable creature, the
@@ -41,7 +45,8 @@ class BotBrain {
  *
  * Extends the virtual/abstract class BotBrain.
  */
-class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
+//class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
+class WormBrain {
  public:
     /**
      * WormBrain constructor.
@@ -57,7 +62,7 @@ class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
        int precision,
        float max_error);
 
-    void process() override;
+    void process();
 
     /**
      * Getter for private count variable.
@@ -90,6 +95,9 @@ class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
      * @return true if withing bounds, false otherwise
      */
     bool inspectAngle(unsigned int index, double change = 0) const;
+
+    WormBody body;  // Controlled bot body object
+    QLearning qLearning;  // Queried Q learning object
 
     // Current position of body in the world
     float current_body_position_x = 0.0f;
