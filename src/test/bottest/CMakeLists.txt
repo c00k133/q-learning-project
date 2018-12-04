@@ -9,8 +9,8 @@ TARGET_LINK_LIBRARIES(bottest
         QLearning
         Box2D
         TestUtils
-        QLearningException
         BodyExceptions
+        QLearningException
 )
 
 ADD_TEST(NAME bottest COMMAND bottest)

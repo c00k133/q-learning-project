@@ -57,8 +57,8 @@ class WormBrain {
      * @param max_error maximum allowed error for bot joint rotation
      */
     WormBrain(
-       WormBody body,
-       QLearning qLearning,
+       WormBody* body,
+       QLearning* qLearning,
        int precision,
        float max_error);
 
@@ -96,8 +96,8 @@ class WormBrain {
      */
     bool inspectAngle(unsigned int index, double change = 0) const;
 
-    WormBody body;  // Controlled bot body object
-    QLearning qLearning;  // Queried Q learning object
+    WormBody* body;  // Controlled bot body object
+    QLearning* qLearning;  // Queried Q learning object
 
     // Current position of body in the world
     float current_body_position_x = 0.0f;
