@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 #include "Box2D/Box2D.h"
 
@@ -25,8 +26,13 @@ class WormBody : public BotBody {
     std::vector<b2Body*> getBones() const;
     std::vector<b2Joint*> getJoints() const;
 
-    /* Used for testing purposes */
-    int getAngleChange() const;
+    const b2Joint* getJoint(unsigned int index) const;
+    float getJointAngle(unsigned int index) const;
+
+    void setJointAngle(unsigned int index, float angle);
+
+    const b2Vec2 getCoordinatesVector() const;
+    const std::tuple<float, float> getCoordinatesTuple() const;
 
     void createBodyParts(b2World* world);
 
@@ -41,6 +47,9 @@ class WormBody : public BotBody {
     inline unsigned int calculateDistance(
         unsigned int index,
         unsigned int offset = 0) const;
+
+    void checkInitialization(std::string message) const;
+    bool initialized = false;
 
     std::vector<b2Joint*> joints;
     std::vector<b2Body*> bones;

@@ -29,8 +29,19 @@ WormBody::WormBody(
   createBodyParts(world);
 }
 
-int WormBody::getAngleChange() const {
-  return angle_change;
+void WormBody::checkInitialization(std::string message) const {
+  if (!initialized) {
+    throw QLearningExceptions::BodyRuntimeException(message);
+  }
+}
+
+const b2Joint* WormBody::getJoint(unsigned int index) const {
+  return joints[index];
+}
+
+float WormBody::getJointAngle(unsigned int index) const {
+  auto tmp = (b2RevoluteJoint*) getJoint(index);
+  return tmp->GetJointAngle();
 }
 
 unsigned int WormBody::getBoneAmount() const {
@@ -38,11 +49,59 @@ unsigned int WormBody::getBoneAmount() const {
 }
 
 std::vector<b2Body*> WormBody::getBones() const {
+  checkInitialization("Bot bones not initialized!");
   return bones;
 }
 
 std::vector<b2Joint*> WormBody::getJoints() const {
+  checkInitialization("Bot joints not initialized!");
   return joints;
+}
+
+void WormBody::setJointAngle(unsigned int index, float angle) {
+  float current_angle = getJointAngle(index);
+
+  float lower, upper, direction;
+  bool motor_enabled = true;
+  if (current_angle > angle) {
+    lower = angle;
+    upper = current_angle;
+    direction = -1.f;
+  } else if (current_angle < angle) {
+    lower = current_angle;
+    upper = angle;
+    direction = 1.f;
+  } else {
+    lower = current_angle;
+    upper = current_angle;
+    direction = 0.f;
+    motor_enabled = false;
+  }
+
+  auto joint = (b2RevoluteJoint*) joints[index];
+  joint->SetLimits(lower, upper);
+  joint->SetMotorSpeed(motor_speed * direction);
+  joint->EnableLimit(motor_enabled);
+}
+
+const std::tuple<float, float> WormBody::getCoordinatesTuple() const {
+  float x = 0.f;
+  float y = 0.f;
+
+  for (auto bone : bones) {
+    auto tmp = bone->GetWorldCenter();
+    x += tmp.x;
+    y += tmp.y;
+  }
+
+  x /= bones.size();
+  y /= bones.size();
+  return std::make_tuple(x, y);
+}
+
+const b2Vec2 WormBody::getCoordinatesVector() const {
+  std::tuple<float, float> tmp = getCoordinatesTuple();
+  return b2Vec2(std::get<0>(tmp), std::get<1>(tmp));
 }
 
 b2BodyDef WormBody::createBodyDef() const {
@@ -104,6 +163,9 @@ b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
 }
 
 void WormBody::createBodyParts(b2World* world) {
+  // Set initialization flag to true
+  initialized = true;
+
   b2BodyDef body_def = createBodyDef();
   b2PolygonShape body_shape = createBodyShape();
   b2FixtureDef body_fixture = createBodyFixtureDef(&body_shape);

@@ -45,23 +45,23 @@ void WormBrain::act(bool random, float curiosity) {
 }
 
 bool WormBrain::inspectAngle(unsigned int index, double change) const {
-  // TODO(Cookie): wait for implementation of getJoints
-  double diff = 0.0 - change;
+  float angle = body->getJointAngle(index);
+  double diff = angle - change;
   return diff > maximum_error || diff < -maximum_error;
 }
 
 void WormBrain::process() {
-  float wormPositionX = 0.0f;  // TODO(Cookie): wait for implementation
+  float wormPositionX = std::get<0>(body->getCoordinatesTuple());
   float reward = wormPositionX - current_body_position_x;
   current_body_position_x = wormPositionX;
 
   qLearning->updateMatrix(reward, next_action);
   act(false);
 
-  double joint_angle_change = rotate_size * next_rotation;
+  auto joint_angle_change = (float) rotate_size * next_rotation;
   bool valid = inspectAngle(next_joint, joint_angle_change);
   if (valid) {
-    // TODO(Cookie): update joint angle
+    body->setJointAngle(next_joint, joint_angle_change);
   }
 
   ++count;
