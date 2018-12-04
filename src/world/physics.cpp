@@ -23,10 +23,16 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 time_step_) {
   b2PolygonShape ground_box;
 
   // The extents are the half-widths of the box
-  ground_box.SetAsBox(50.0f, 10.0f);
+  ground_box.SetAsBox(ground_width, ground_height);
+
+  b2FixtureDef ground_fixture_def;
+  ground_fixture_def.density = 1.f;
+  ground_fixture_def.shape = &ground_box;
+  ground_fixture_def.filter.categoryBits = 2;
+  ground_fixture_def.filter.maskBits = 1;
 
   // Add the ground fixture to the ground body
-  ground_body->CreateFixture(&ground_box, 0.0f);
+  ground_body->CreateFixture(&ground_fixture_def);
 }
 
 PhysicsEngine::~PhysicsEngine() {
@@ -39,6 +45,10 @@ b2World* PhysicsEngine::getWorld() const {
 
 b2Body* PhysicsEngine::getGround() const {
   return ground_body;
+}
+
+const b2Vec2 PhysicsEngine::getGroundDimensions() const {
+  return b2Vec2(ground_width, ground_height);
 }
 
 float32 PhysicsEngine::getTimeStep() const {

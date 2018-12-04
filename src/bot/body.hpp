@@ -8,12 +8,13 @@
 #include "Box2D/Box2D.h"
 
 
-class BotBody {
- public:
-    ~BotBody() = default;
-};
+//class BotBody {
+// public:
+//    ~BotBody() = default;
+//};
 
-class WormBody : public BotBody {
+//class WormBody : public BotBody {
+class WormBody {
  public:
     /**
      * WormBody constructor.

@@ -3,6 +3,7 @@
 
 #include "body.hpp"
 #include "qlearning.hpp"
+#include "Box2D/Box2D.h"
 
 ///**
 // * Abstract class Brain: represents the brains of bots.
@@ -60,9 +61,23 @@ class WormBrain {
        WormBody* body,
        QLearning* qLearning,
        int precision,
-       float max_error);
+       float max_error = 3);
+
+    WormBrain(
+            int precision,
+            b2World* world,
+            float max_error = 3,
+            unsigned int bone_amount = 3);
+
+    ~WormBrain();
 
     void process();
+
+    const b2Vec2 getBodyCoordinatesVector() const;
+    const std::tuple<float, float> getBodyCoordinatesTuple() const;
+
+    std::vector<b2Body*> getBodyBones() const;
+    std::vector<b2Joint*> getBodyJoints() const;
 
     /**
      * Getter for private count variable.
@@ -71,6 +86,8 @@ class WormBrain {
     int getCount();
 
  private:
+    void init(int precision, float max_error);
+
     /**
      * Method for updating the current brain state.
      * Calculates new angles and returns new state.

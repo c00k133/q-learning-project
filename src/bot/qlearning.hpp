@@ -20,7 +20,7 @@ class QLearning {
     QLearning(
             unsigned int states,
             unsigned int actions,
-            double gamma);
+            double gamma = 0.8);
 
     /**
      * Getter for current state of this Q object.

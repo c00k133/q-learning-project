@@ -4,23 +4,62 @@
 #include "body.hpp"
 
 
+void WormBrain::init(int in_precision, float max_error) {
+  precision = in_precision;
+  rotate_size = 2.0 * M_PI / precision;
+  maximum_error = rotate_size / max_error;
+}
+
 WormBrain::WormBrain(
         WormBody* body,
         QLearning* qLearning,
         int precision,
         float max_error
-): body(body), qLearning(qLearning), precision(precision) {
-  rotate_size = 2.0 * M_PI / precision;
-  maximum_error = rotate_size / max_error;
+): body(body), qLearning(qLearning) {
+  init(precision, max_error);
+}
+
+WormBrain::WormBrain(
+        int precision,
+        b2World *world,
+        float max_error,
+        unsigned int bone_amount) {
+  init(precision, max_error);
+
+  body = new WormBody(world, bone_amount);
+  auto joint_amount = (unsigned int) body->getJoints().size();
+  auto states = (unsigned int) pow(precision, joint_amount);
+  qLearning = new QLearning(states, 1 + joint_amount * 2);
+}
+
+WormBrain::~WormBrain() {
+  delete body;
+  delete qLearning;
 }
 
 int WormBrain::getCount() {
   return count;
 }
 
+const b2Vec2 WormBrain::getBodyCoordinatesVector() const {
+  return body->getCoordinatesVector();
+}
+
+const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
+  return body->getCoordinatesTuple();
+}
+
+std::vector<b2Body*> WormBrain::getBodyBones() const {
+  return body->getBones();
+}
+
+std::vector<b2Joint*> WormBrain::getBodyJoints() const {
+  return body->getJoints();
+}
+
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   int change = -1 + (2 * (action % 2));
-  unsigned int joint = (action + 1) / 2 - 1;
+  unsigned int joint = (action + 1) / 2;// - 1;
 
   next_rotation = change;
   next_joint = joint;
@@ -28,7 +67,7 @@ unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   double precision_joint = pow(precision, joint);
   auto old_angle =
       static_cast<unsigned int>(state / precision_joint) % precision;
-  int new_angle = (old_angle + change < 0 ?
+  int new_angle = ((int) (old_angle + change) < 0 ?
     precision + (old_angle + change) : old_angle + change) % precision;
 
   auto return_state = static_cast<unsigned int>(

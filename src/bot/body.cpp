@@ -174,12 +174,13 @@ void WormBody::createBodyParts(b2World* world) {
 
   bones[0] = first_body;
   for (unsigned int i = 1; i < bone_amount; ++i) {
-    body_def.position.Set(calculateDistance(i, 5), 0.f);
+    //body_def.position.Set(calculateDistance(i, 5), 0.f);
+    body_def.position.Set(calculateDistance(i, 5), -70.f);
     b2Body* body = world->CreateBody(&body_def);
     body->CreateFixture(&body_fixture);
     bones[i] = body;
 
     b2RevoluteJointDef joint_def = createJoint(i);
-    joints[i - 1] = world->CreateJoint(&joint_def);
+    joints[i - 1] = (b2RevoluteJoint*) world->CreateJoint(&joint_def);
   }
 }

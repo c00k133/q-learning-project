@@ -1,10 +1,9 @@
-#include <QApplication>
 #include <SFML/Graphics.hpp>
 
-#include "mainwindow.h"
 #include "brain.hpp"
 #include "physics.hpp"
 #include "Box2D/Box2D.h"
+#include "sfml-drawer.hpp"
 
 
 int main() {
@@ -32,18 +31,8 @@ int main() {
 
     window.clear(sf::Color::White);
 
-    for (b2Body* body = world->GetBodyList(); body; body = body->GetNext()) {
-      if (body->GetType() != b2_dynamicBody) {
-        for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-          sf::RectangleShape ground(sf::Vector2f(300, 100));
-          ground.setFillColor(sf::Color::Green);
-          ground.setOrigin(300 / 2, 200 / 2);
-          ground.setPosition(body->GetPosition().x, body->GetPosition().y);
-          ground.setRotation(body->GetAngle() * 1800 / b2_pi);
-          window.draw(ground);
-        }
-      }
-    }
+    SFMLDrawer::drawGround(
+            window, engine.getGround(), engine.getGroundDimensions());
 
     std::vector<b2Body*> bones = worm->getBodyBones();
     for (auto bone : bones) {
