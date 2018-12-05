@@ -39,6 +39,7 @@ int main() {
 
     engine.step();
     window.clear(sf::Color::White);
+    worm->process();
 
     const b2Vec2 ground_dimensions = engine.getGroundDimensions();
     SFMLDrawer::drawGround(
@@ -46,7 +47,6 @@ int main() {
     SFMLDrawer::drawWorm(window, worm, scale);
     SFMLDrawer::drawTicks(window, scale, ground_dimensions.y);
 
-    worm->process();
     window.display();
   }
 

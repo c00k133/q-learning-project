@@ -57,7 +57,7 @@ namespace SFMLDrawer {
             const float32 y_position = bone_position.y * scale;
             bone_shape.setPosition(x_position, y_position);
 
-            //bone_shape.setRotation(bone->GetAngle() * 180 / b2_pi);
+            bone_shape.setRotation(bone->GetAngle() * 180 / b2_pi);
             bone_shape.setOutlineThickness(1.f);
             bone_shape.setOutlineColor(sf::Color::Black);
 
@@ -78,13 +78,12 @@ namespace SFMLDrawer {
 
       sf::Font font;
       const std::string font_path =
-            "/usr/share/fonts/truetype/roboto/hinted/Roboto-Medium.ttf";
+//            "/usr/share/fonts/truetype/roboto/hinted/Roboto-Medium.ttf";
+            "/usr/share/fonts/TTF/DejaVuSerif.ttf";
 
       if (!font.loadFromFile(font_path)) {
         throw QLearningExceptions::BodyRuntimeException(
-                "Font path ["
-                + font_path
-                + "] was not found");
+                "Font path [" + font_path + "] was not found");
       }
 
       sf::Text ticks;

@@ -47,9 +47,7 @@ class WormBody {
     b2FixtureDef createBodyFixtureDef(const b2PolygonShape* shape) const;
     b2RevoluteJointDef createJoint(unsigned int index) const;
 
-    inline int calculateDistance(
-        unsigned int index,
-        unsigned int offset = 0) const;
+    inline int calculateDistance(unsigned int index, int offset = 0) const;
 
     void checkInitialization(std::string message) const;
     bool initialized = false;
@@ -60,14 +58,17 @@ class WormBody {
     unsigned int bone_amount;
 
     // TODO(Cookie): check if these need to be changed later on
-    static constexpr float bone_width = 10.f;//2.f;
-    static constexpr float bone_length = 2.f;//10.f;
+    static constexpr float bone_width = 10.f;
+    static constexpr float bone_length = 2.f;
     static constexpr float density = 1.f;
     static constexpr float friction = 0.3f;
     static constexpr float linear_damping = 0.f;
     static constexpr float angular_damping = 0.01f;
     static constexpr float motor_speed = 0.5f;
-    static constexpr float y_distance = -60.f;//-70.f;
+    static constexpr float y_distance = 0.f;
+    static constexpr float max_motor_torque = 200000.f;
+    static constexpr int category_bits = 1;
+    static constexpr int mask_bits = 2;
 };
 
 #endif
