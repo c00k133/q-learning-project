@@ -49,6 +49,10 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
   return body->getCoordinatesTuple();
 }
 
+const std::tuple<float, float> WormBrain::getBodyBoneDimensions() const {
+  return body->getBoneDimensions();
+}
+
 std::vector<b2Body*> WormBrain::getBodyBones() const {
   return body->getBones();
 }
@@ -58,8 +62,14 @@ std::vector<b2Joint*> WormBrain::getBodyJoints() const {
 }
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
-  int change = -1 + (2 * (action % 2));
-  unsigned int joint = (action + 1) / 2;// - 1;
+  // 0 == no movement at all
+  if (action == 0) {
+    next_rotation = 0;
+    return state;
+  }
+
+  int change = 2 * (action % 2) - 1;
+  unsigned int joint = (action + 1) / 2 - 1;
 
   next_rotation = change;
   next_joint = joint;

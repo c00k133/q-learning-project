@@ -10,6 +10,8 @@ namespace QLearningExceptions {
   public:
     explicit QLearningRuntimeException(std::string message);
     ~QLearningRuntimeException() override = default;
+
+    virtual const char* what() const throw() override = 0;
  };
 }
 

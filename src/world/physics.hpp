@@ -24,8 +24,8 @@ class PhysicsEngine {
     // Typically we use a time of 1/60 of a second (60Hz)
     // This provides a high quality simulation in most game scenarios
     float32 time_step;
-    static constexpr int32 velocity_iterations = 6;
-    static constexpr int32 position_iterations = 2;
+    static constexpr int32 velocity_iterations = 8;
+    static constexpr int32 position_iterations = 3;
     // Gravitational force: positive as origin of the world is "up-left"
     static constexpr float gravitational_force = 9.81f;
     static constexpr float ground_width = 8000.f;

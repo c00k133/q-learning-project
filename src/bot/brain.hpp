@@ -76,6 +76,8 @@ class WormBrain {
     const b2Vec2 getBodyCoordinatesVector() const;
     const std::tuple<float, float> getBodyCoordinatesTuple() const;
 
+    const std::tuple<float, float> getBodyBoneDimensions() const;
+
     std::vector<b2Body*> getBodyBones() const;
     std::vector<b2Joint*> getBodyJoints() const;
 

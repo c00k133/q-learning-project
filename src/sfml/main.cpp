@@ -13,7 +13,7 @@ int main() {
 
   PhysicsEngine engine = PhysicsEngine();
   b2World* world = engine.getWorld();
-  WormBrain* worm = new WormBrain(24, world);
+  auto worm = new WormBrain(24, world);
 
   while (window.isOpen()) {
     auto xyy = worm->getBodyCoordinatesVector();
@@ -22,36 +22,24 @@ int main() {
 
     sf::Event event;
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
+      switch (event.type) {  // TODO(Cookie): fill out with other key-presses
+        case sf::Event::Closed:
+          window.close();
+          break;
+
+        default:
+          break;
       }
     }
 
-    world->Step(1.f / 60.f, 8, 3);
-
+    engine.step();
     window.clear(sf::Color::White);
 
     SFMLDrawer::drawGround(
             window, engine.getGround(), engine.getGroundDimensions());
-
-    std::vector<b2Body*> bones = worm->getBodyBones();
-    for (auto bone : bones) {
-      for (b2Fixture* fixture = bone->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-        if (fixture->GetType() == b2Shape::e_polygon) {
-          sf::RectangleShape w(sf::Vector2f(10, 10));
-          w.setFillColor(sf::Color(88, 222, 255));
-          w.setOrigin(10 / 2, 10 / 2);
-          w.setPosition(bone->GetPosition().x, bone->GetPosition().y);
-          w.setRotation(bone->GetAngle() * 180 / b2_pi);
-          w.setOutlineThickness(1.f);
-          w.setOutlineColor(sf::Color::Black);
-          window.draw(w);
-        }
-      }
-    }
+    SFMLDrawer::drawWorm(window, worm);
 
     worm->process();
-
     window.display();
   }
 

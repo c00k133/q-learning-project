@@ -44,13 +44,12 @@ unsigned int QLearning::calculateBestAction() {
   unsigned int current_best = 0;
   double current_max = q_matrix[state][current_best];
 
-  for (unsigned int i = 1; i < actions; i++) {
+  for (unsigned int i = 1; i < actions; ++i) {
     if (q_matrix[state][i] > current_max) {
       current_max = q_matrix[state][i];
       current_best = i;
     }
   }
-
   return current_best;
 }
 
