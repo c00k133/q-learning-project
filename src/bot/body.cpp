@@ -37,9 +37,9 @@ void WormBody::checkInitialization(std::string message) const {
 const b2Joint* WormBody::getJoint(unsigned int index) const {
   if (index >= joints.size()) {
     throw QLearningExceptions::BodyRuntimeException(
-        "Index "
+            "Index "
             + std::to_string(index)
-            + " larger than amount of joints: "
+            + " is larger than or equal to joints list length: "
             + std::to_string(joints.size()));
   }
 

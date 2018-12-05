@@ -3,6 +3,8 @@
 
 #include <stdexcept>
 #include <string>
+#include <sstream>
+#include <iostream>
 
 
 namespace QLearningExceptions {
@@ -10,8 +12,6 @@ namespace QLearningExceptions {
   public:
     explicit QLearningRuntimeException(std::string message);
     ~QLearningRuntimeException() override = default;
-
-    virtual const char* what() const throw() override = 0;
  };
 }
 

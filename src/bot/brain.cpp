@@ -62,7 +62,7 @@ std::vector<b2Joint*> WormBrain::getBodyJoints() const {
 }
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
-  // 0 == no movement at all
+  // 0 == take no action
   if (action == 0) {
     next_rotation = 0;
     return state;

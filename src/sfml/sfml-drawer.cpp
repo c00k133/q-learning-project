@@ -56,6 +56,7 @@ namespace SFMLDrawer {
 
             window.draw(bone_shape);
           }
+
           fixture = fixture->GetNext();
         }
       }
