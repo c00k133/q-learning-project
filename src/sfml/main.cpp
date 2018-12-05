@@ -7,8 +7,13 @@
 
 
 int main() {
-  sf::View view(sf::Vector2f(0, 0), sf::Vector2f(300, 300));
-  sf::RenderWindow window(sf::VideoMode(300, 300), "Testing");
+  const float scale = 10.f;
+  const float window_y_offset = -10.f;
+  const unsigned int window_width = 1200;
+  const unsigned int window_height = 600;
+
+  sf::View view(sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
+  sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Testing");
   window.setFramerateLimit(60);
 
   PhysicsEngine engine = PhysicsEngine();
@@ -17,7 +22,7 @@ int main() {
 
   while (window.isOpen()) {
     auto xyy = worm->getBodyCoordinatesVector();
-    view.setCenter(xyy.x, -10);
+    view.setCenter(xyy.x * scale, window_y_offset * scale);
     window.setView(view);
 
     sf::Event event;
@@ -35,9 +40,11 @@ int main() {
     engine.step();
     window.clear(sf::Color::White);
 
+    const b2Vec2 ground_dimensions = engine.getGroundDimensions();
     SFMLDrawer::drawGround(
-            window, engine.getGround(), engine.getGroundDimensions());
-    SFMLDrawer::drawWorm(window, worm);
+            window, engine.getGround(), ground_dimensions, scale);
+    SFMLDrawer::drawWorm(window, worm, scale);
+    SFMLDrawer::drawTicks(window, scale, ground_dimensions.y);
 
     worm->process();
     window.display();

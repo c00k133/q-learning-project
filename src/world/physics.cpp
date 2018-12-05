@@ -2,8 +2,8 @@
 #include "Box2D/Box2D.h"
 
 
-PhysicsEngine::PhysicsEngine(float world_pos, float32 time_step_) {
-  time_step = 1.0f / time_step_;
+PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
+  time_step = 1.0f / in_time_step;
 
   // Define the gravity vector
   b2Vec2 gravity = b2Vec2(0.0f, gravitational_force);

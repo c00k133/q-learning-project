@@ -47,7 +47,7 @@ class WormBody {
     b2FixtureDef createBodyFixtureDef(const b2PolygonShape* shape) const;
     b2RevoluteJointDef createJoint(unsigned int index) const;
 
-    inline unsigned int calculateDistance(
+    inline int calculateDistance(
         unsigned int index,
         unsigned int offset = 0) const;
 

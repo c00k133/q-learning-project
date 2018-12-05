@@ -6,7 +6,7 @@
 
 class PhysicsEngine {
  public:
-    explicit PhysicsEngine(float world_pos = -10.0f, float32 time_step = 60.0f);
+    explicit PhysicsEngine(float world_pos = 10.f, float32 time_step = 60.f);
     ~PhysicsEngine();
 
     b2World* getWorld() const;

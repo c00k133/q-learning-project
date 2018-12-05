@@ -130,8 +130,6 @@ class WormBrain {
     int next_rotation = 0;  // Rotation to take in future iteration
     unsigned int next_action = 0;  // Action to take in future iteration
     unsigned int next_joint = 0;  // Joint to consider in future iteration
-
-    static constexpr float rotation_speed = 0.5f;
 };
 
 #endif  // Q_LEARNING_BRAIN_HPP

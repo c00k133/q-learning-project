@@ -100,9 +100,9 @@ bool WormBrain::inspectAngle(unsigned int index, double change) const {
 }
 
 void WormBrain::process() {
-  float wormPositionX = std::get<0>(body->getCoordinatesTuple());
-  float reward = wormPositionX - current_body_position_x;
-  current_body_position_x = wormPositionX;
+  float worm_position_x = std::get<0>(body->getCoordinatesTuple());
+  float reward = worm_position_x - current_body_position_x;
+  current_body_position_x = worm_position_x;
 
   qLearning->updateMatrix(reward, next_action);
   act(false);

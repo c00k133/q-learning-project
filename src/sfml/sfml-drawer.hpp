@@ -12,10 +12,18 @@ namespace SFMLDrawer {
             sf::RenderWindow &window,
             b2Body* ground_body,
             b2Vec2 ground_dimensions,
+            float scale,
             sf::Color color = sf::Color::Black);
             // TODO(Cookie): localize color to world
 
-    void drawWorm(sf::RenderWindow &window, WormBrain* worm);
+    void drawWorm(sf::RenderWindow &window, WormBrain* worm, float scale);
+
+    void drawTicks(
+            sf::RenderWindow &window,
+            float scale,
+            float ground_width,
+            int separation = 10,
+            unsigned int text_size = 24);
 
 }
 

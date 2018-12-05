@@ -88,7 +88,7 @@ void WormBody::setJointAngle(unsigned int index, float angle) {
   auto joint = (b2RevoluteJoint*) getJoint(index);
   joint->SetLimits(lower, upper);
   joint->SetMotorSpeed(motor_speed * direction);
-  joint->EnableLimit(motor_enabled);
+  joint->EnableMotor(motor_enabled);
 }
 
 const std::tuple<float, float> WormBody::getCoordinatesTuple() const {
@@ -148,11 +148,11 @@ b2FixtureDef WormBody::createBodyFixtureDef(const b2PolygonShape* shape) const {
   return body_fixture;
 }
 
-inline unsigned int WormBody::calculateDistance(
+inline int WormBody::calculateDistance(
     unsigned int index,
     unsigned int offset) const
 {
-  return ((unsigned int) bone_width) * index - offset;
+  return ((int) bone_width) * index - offset;
 }
 
 b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
