@@ -25,15 +25,21 @@ SET(GUISOURCES
         qsfmlwidget.cpp
 )
 
-ADD_EXECUTABLE(q-learningGUI ${GUISOURCES})
+SET(BOTSOURCES BotBrain QLearning BotBody)
+SET(PHYSICSSOURCES Physics)
+SET(EXCEPTIONSOURCES BodyExceptions QLearningException)
+
+ADD_EXECUTABLE(qlearningGUI ${GUISOURCES})
 # Use the Widgets module from Qt 5
-TARGET_LINK_LIBRARIES(q-learningGUI
+TARGET_LINK_LIBRARIES(qlearningGUI
         Qt5::Widgets
         Qt5::Core
         Qt5::Network
         ${SFML_LIBRARIES}
-#        sfml-graphics
-#        sfml-audio
+        ${BOTSOURCES}
+        ${EXCEPTIONSOURCES}
+        ${PHYSICSSOURCES}
+        Box2D
 )
 
 GET_TARGET_PROPERTY(QtCore_location Qt5::Core LOCATION)

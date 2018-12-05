@@ -8,12 +8,13 @@
 #include "Box2D/Box2D.h"
 
 
-class BotBody {
- public:
-    ~BotBody() = default;
-};
+//class BotBody {
+// public:
+//    ~BotBody() = default;
+//};
 
-class WormBody : public BotBody {
+//class WormBody : public BotBody {
+class WormBody {
  public:
     /**
      * WormBody constructor.
@@ -27,12 +28,14 @@ class WormBody : public BotBody {
     std::vector<b2Joint*> getJoints() const;
 
     const b2Joint* getJoint(unsigned int index) const;
-    float getJointAngle(unsigned int index) const;
+    float32 getJointAngle(unsigned int index) const;
 
     void setJointAngle(unsigned int index, float angle);
 
     const b2Vec2 getCoordinatesVector() const;
     const std::tuple<float, float> getCoordinatesTuple() const;
+
+    const std::tuple<float, float> getBoneDimensions() const;
 
     void createBodyParts(b2World* world);
 
@@ -44,9 +47,7 @@ class WormBody : public BotBody {
     b2FixtureDef createBodyFixtureDef(const b2PolygonShape* shape) const;
     b2RevoluteJointDef createJoint(unsigned int index) const;
 
-    inline unsigned int calculateDistance(
-        unsigned int index,
-        unsigned int offset = 0) const;
+    inline int calculateDistance(unsigned int index, int offset = 0) const;
 
     void checkInitialization(std::string message) const;
     bool initialized = false;
@@ -57,14 +58,17 @@ class WormBody : public BotBody {
     unsigned int bone_amount;
 
     // TODO(Cookie): check if these need to be changed later on
-    static constexpr float bone_width = 0.5f;
+    static constexpr float bone_width = 10.f;
     static constexpr float bone_length = 2.f;
-    static constexpr int angle_change = 10;
     static constexpr float density = 1.f;
     static constexpr float friction = 0.3f;
     static constexpr float linear_damping = 0.f;
     static constexpr float angular_damping = 0.01f;
     static constexpr float motor_speed = 0.5f;
+    static constexpr float y_distance = 0.f;
+    static constexpr float max_motor_torque = 200000.f;
+    static constexpr int category_bits = 1;
+    static constexpr int mask_bits = 2;
 };
 
 #endif

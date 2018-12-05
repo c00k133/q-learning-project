@@ -5,6 +5,6 @@
 
 namespace QLearningExceptions {
  BodyRuntimeException::BodyRuntimeException(std::string message) :
-      QLearningRuntimeException(message), message(message) {}
+      QLearningRuntimeException(message) {}
 
 }
