@@ -1,3 +1,4 @@
+# Use FindSFML.cmake module to find SFML on this local computer
 SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/libs")
 FIND_PACKAGE(SFML REQUIRED system window graphics network audio)
 IF(SFML_FOUND)
