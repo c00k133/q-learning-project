@@ -27,6 +27,10 @@ class QLearning {
      * @return current state of this Q object
      */
      unsigned int getState() const;
+     /**
+      * Getter for accuracy
+      * @return accuracy as an int
+      */
      int getAccuracy() const;
 
     /**

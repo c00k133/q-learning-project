@@ -197,6 +197,7 @@ void WormBody::createBodyParts(b2World* world) {
   initialized = true;
 
   b2BodyDef body_def = createBodyDef();
+  // Set initial position of bot body definition
   body_def.position.Set(calculateDistance(0, 5), y_distance);
 
   b2PolygonShape body_shape = createBodyShape();
