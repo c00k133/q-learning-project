@@ -20,8 +20,8 @@ WormBrain::WormBrain(
 }
 
 WormBrain::WormBrain(
-        int precision,
         b2World *world,
+        int precision,
         float max_error,
         unsigned int bone_amount) {
   init(precision, max_error);
@@ -49,16 +49,8 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
   return body->getCoordinatesTuple();
 }
 
-const std::tuple<float, float> WormBrain::getBodyBoneDimensions() const {
-  return body->getBoneDimensions();
-}
-
-std::vector<b2Body*> WormBrain::getBodyBones() const {
-  return body->getBones();
-}
-
-std::vector<b2Joint*> WormBrain::getBodyJoints() const {
-  return body->getJoints();
+const WormBody* WormBrain::getBody() const {
+  return body;
 }
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
@@ -110,7 +102,10 @@ void WormBrain::process() {
   auto joint_angle_change = (float) rotate_size * next_rotation;
   bool valid = inspectAngle(next_joint, joint_angle_change);
   if (valid) {
+    std::cout << joint_angle_change << std::endl;
     body->setJointAngle(next_joint, joint_angle_change);
+  } else {
+    std::cout << "not a valid angle change!" << std::endl;
   }
 
   ++count;

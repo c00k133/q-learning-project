@@ -36,11 +36,13 @@ namespace SFMLDrawer {
     }
 
     void drawWorm(sf::RenderWindow &window, WormBrain* worm, float scale) {
-      std::tuple<float, float> bone_dimensions = worm->getBodyBoneDimensions();
+      const WormBody* worm_body = worm->getBody();
+
+      std::tuple<float, float> bone_dimensions = worm_body->getBoneDimensions();
       float bone_width = std::get<0>(bone_dimensions) * scale;
       float bone_length = std::get<1>(bone_dimensions) * scale;
 
-      std::vector<b2Body*> bones = worm->getBodyBones();
+      std::vector<b2Body*> bones = worm_body->getBones();
       for (auto bone : bones) {
         b2Fixture* fixture = bone->GetFixtureList();
         while (fixture) {
@@ -48,8 +50,8 @@ namespace SFMLDrawer {
             sf::RectangleShape
                 bone_shape(sf::Vector2f(bone_width, bone_length));
 
-            // TODO(Cookie): localize colors to the worm body
-            bone_shape.setFillColor(sf::Color(88, 222, 255));
+            sf::Color body_color = worm_body->getBodyColor();
+            bone_shape.setFillColor(body_color);
             bone_shape.setOrigin(bone_width / 2.f, bone_length / 2.f);
 
             const b2Vec2 bone_position = bone->GetPosition();
@@ -59,7 +61,9 @@ namespace SFMLDrawer {
 
             bone_shape.setRotation(bone->GetAngle() * 180 / b2_pi);
             bone_shape.setOutlineThickness(1.f);
-            bone_shape.setOutlineColor(sf::Color::Black);
+
+            sf::Color body_outline_color =worm_body->getBodyOutlineColor();
+            bone_shape.setOutlineColor(body_outline_color);
 
             window.draw(bone_shape);
           }

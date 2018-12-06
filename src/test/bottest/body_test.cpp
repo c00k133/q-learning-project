@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "body.hpp"
 #include "test_utils.hpp"
-#include "qlearning-runtime-exception.hpp"
+#include "qlearning-exception.hpp"
 #include "body-exceptions.hpp"
 
 

@@ -18,7 +18,7 @@ int main() {
 
   PhysicsEngine engine = PhysicsEngine();
   b2World* world = engine.getWorld();
-  auto worm = new WormBrain(24, world);
+  auto worm = new WormBrain(world, 24);
 
   while (window.isOpen()) {
     auto xyy = worm->getBodyCoordinatesVector();

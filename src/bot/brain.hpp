@@ -5,53 +5,19 @@
 #include "qlearning.hpp"
 #include "Box2D/Box2D.h"
 
-///**
-// * Abstract class Brain: represents the brains of bots.
-// */
-//class BotBrain {
-// public:
-//    /**
-//     * BotBrain constructor.
-//     * Needs a body to control and a Q learning object to calculate optimal
-//     * steps with.
-//     * @param body controlled bot body
-//     * @param qLearning queried Q learning object
-//     */
-//    BotBrain(
-//       BotBody* body_,
-//       QLearning* qLearning_
-//    ) {
-//       body = body_;
-//       qLearning = qLearning_;
-//    }
-//
-//    /** Virtual destructor for showcasing abstractness of class. */
-//    virtual ~BotBrain() = default;
-//
-//    /**
-//     * This is the method called each time the brain should "think".
-//     * The method queries the Q learning object for advice on how to move the
-//     * body.
-//     */
-//    virtual void process() = 0;
-//
-// protected:
-//    BotBody* body;  // Bot body object
-//    QLearning* qLearning;  // Q learning object
-//};
 
 /**
  * Class WormBrain: represents the brains of our first movable creature, the
  * worm.
- *
- * Extends the virtual/abstract class BotBrain.
  */
-//class WormBrain : BotBrain {  // TODO(cookie): check if superclass is needed
 class WormBrain {
  public:
     /**
      * WormBrain constructor.
-     * Needs a body to control and a Q learning object to query.
+     *
+     * This constructor takes a ready made body and q-learning object for
+     * controlling.
+     *
      * @param body controlled worm bot body
      * @param qLearning queried Q learning object
      * @param precision precision used in angle calculations
@@ -63,23 +29,57 @@ class WormBrain {
        int precision,
        float max_error = 3);
 
+    /**
+     * WormBrain constructor.
+     *
+     * Takes an input world to create a new body and q-learning object with.
+     *
+     * @param world world that the worm body moves in
+     * @param precision precision used in angle calculations
+     * @param max_error maximum allowed error for bot joint rotation
+     * @param bone_amount amount of bones in the worm body,
+     *                    must be larger than 0, defaults to 3
+     */
     WormBrain(
-            int precision,
             b2World* world,
+            int precision,
             float max_error = 3,
             unsigned int bone_amount = 3);
 
+    /**
+     * WormBrain destructor.
+     *
+     * Takes care of releasing body and q-learning allocated memory.
+     */
     ~WormBrain();
 
+    /**
+     * Updates the state of the whole worm based on actions.
+     *
+     * The process() method updates the state of the WormBrain, WormBody, and
+     * the QLearning object according to physical reactions.
+     *
+     * This method can be thought of as the brains thought-process.
+     */
     void process();
 
+    /**
+     * Getter for the coordinates of the body as a b2Vec2.
+     * @return the body coordinates as a b2Vec2
+     */
     const b2Vec2 getBodyCoordinatesVector() const;
+
+    /**
+     * Getter for the coordinates of the body as a std::tuple.
+     * @return the body coordinates as a std::tuple
+     */
     const std::tuple<float, float> getBodyCoordinatesTuple() const;
 
-    const std::tuple<float, float> getBodyBoneDimensions() const;
-
-    std::vector<b2Body*> getBodyBones() const;
-    std::vector<b2Joint*> getBodyJoints() const;
+    /**
+     * Getter for the WormBody.
+     * @return a const pointer to the WormBody.
+     */
+    const WormBody* getBody() const;
 
     /**
      * Getter for private count variable.
@@ -88,6 +88,12 @@ class WormBrain {
     int getCount();
 
  private:
+    /**
+     * Common initialization method for all brain constructors.
+     *
+     * @param precision input precision used in angle calculations
+     * @param max_error maximum allowed error for bot joint rotation
+     */
     void init(int precision, float max_error);
 
     /**

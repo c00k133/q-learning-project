@@ -4,70 +4,199 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"
 
 
-//class BotBody {
-// public:
-//    ~BotBody() = default;
-//};
-
-//class WormBody : public BotBody {
 class WormBody {
  public:
     /**
-     * WormBody constructor.
-     * @param bone_amount amount of bones in this worm, minimum 1
+     * WormBody constructor without initialization.
+     * Needs to be initialized by calling method `createBodyParts()`.
+     * @param bone_amount amount of bones in this worm, minimum 1, default 3
      */
     explicit WormBody(unsigned int bone_amount = 3);
+
+    /**
+     * WormBody constructor with initialization.
+     * @param world the world in which this body exists
+     * @param bone_amount amount of bones in this worm, minimum 1, default 3
+     */
     explicit WormBody(b2World* world, unsigned int bone_amount = 3);
 
+    /**
+     * Getter for amount of bones in this WormBody.
+     * @return amount of bones
+     */
     unsigned int getBoneAmount() const;
+
+    /**
+     * Getter for all bones in this WormBody.
+     * A bone represents a Box2D section of the WormBody.
+     * @return std::vector with pointers to bones
+     */
     std::vector<b2Body*> getBones() const;
+    /**
+     * Getter for all joints in this WormBody.
+     * A joint connect two bones and works as the motor for moving.
+     * @return std::vector with pointers to joints
+     */
     std::vector<b2Joint*> getJoints() const;
 
+    /**
+     * Getter for the body bone color.
+     * @return SFML color for bones
+     */
+    sf::Color getBodyColor() const;
+    /**
+     * Getter for the outline bone color.
+     * @return SFML color bone outlines
+     */
+    sf::Color getBodyOutlineColor() const;
+
+    /**
+     * Getter for certain body joint.
+     * @param index index for which joint
+     * @return const pointer to the wanted joint
+     */
     const b2Joint* getJoint(unsigned int index) const;
+    /**
+     * Getter for body joint angle.
+     * @param index which joint angle
+     * @return joint angle
+     */
     float32 getJointAngle(unsigned int index) const;
 
+    /**
+     * Set a new angle for a certain body joint.
+     * @param index which joint to affect
+     * @param angle the target angle
+     */
     void setJointAngle(unsigned int index, float angle);
 
-    const b2Vec2 getCoordinatesVector() const;
-    const std::tuple<float, float> getCoordinatesTuple() const;
+    /**
+     * Setter for the body bone color.
+     * @param new_color new color for bones
+     */
+    void setBodyColor(sf::Color new_color);
+    /**
+     * Setter for the body bone outline color.
+     * @param new_color new color for outline
+     */
+    void setBodyOutlineColor(sf::Color new_color);
 
+    /**
+     * Getter for coordinates of this WormBody.
+     * This is calculated by taking the average of each bone coordinate.
+     * @return std::tuple consisting of x and y coordinates respectively
+     */
+    const std::tuple<float, float> getCoordinatesTuple() const;
+    /**
+     * Getter for coordinates of this WormBody.
+     * This is calculated by taking the average of each bone coordinate.
+     * @return b2Vec2 consisting of x and y coordinates respectively
+     */
+    const b2Vec2 getCoordinatesVector() const;
+
+    /**
+     * Getter for dimensions of body bones, used mainly in drawing.
+     * @return a std::tuple consisting of width and length respectively
+     */
     const std::tuple<float, float> getBoneDimensions() const;
 
+    /**
+     * Method for creating all body parts of this WormBody object.
+     * Includes the creation of all bones and connecting joints.
+     * @param world world in which these body parts exist
+     */
     void createBodyParts(b2World* world);
 
  private:
+    /**
+     * Common initialization method for all WormBody constructors.
+     * @param bone_amount amount of bones in this worm
+     */
     void init(unsigned int bone_amount);
 
+    /**
+     * Helper method for creating a Box2D body definition for bones.
+     * @return body definition for a bone
+     */
     b2BodyDef createBodyDef() const;
+    /**
+     * Helper method for creating a Box2D body shape for bones.
+     * The shape is a rectangle.
+     * @return body shape for a bone
+     */
     b2PolygonShape createBodyShape() const;
+    /**
+     * Helper method for creating a Box2D body fixture based on a body shape.
+     * @param shape input body shape used to create this fixture
+     * @return fixture derived from input shape
+     */
     b2FixtureDef createBodyFixtureDef(const b2PolygonShape* shape) const;
+    /**
+     * Helper method for creating a connecting joint between two bones.
+     * @param index index of bone in bones vector, must be minimum of 1
+     * @return joint connecting two bones
+     */
     b2RevoluteJointDef createJoint(unsigned int index) const;
 
+    /**
+     * Helper method for calculating distances between bones.
+     * @param index multiplier for each body
+     * @param offset offset from origin of whole body
+     * @return calculated distance
+     */
     inline int calculateDistance(unsigned int index, int offset = 0) const;
 
+    /**
+     * Method for checking if this worm body has been initialized.
+     * Throws an exception otherwise.
+     * @param message string message to be passed to the exception
+     */
     void checkInitialization(std::string message) const;
+
+    // Initialization variable for this worm body
+    // A worm is initialized when all Box2D body parts have been created
     bool initialized = false;
 
+    // Vector with pointers to each joint
     std::vector<b2Joint*> joints;
+    // Vector with pointers to each bone
     std::vector<b2Body*> bones;
 
+    // Total amount of bones in this body
     unsigned int bone_amount;
 
-    // TODO(Cookie): check if these need to be changed later on
-    static constexpr float bone_width = 10.f;
-    static constexpr float bone_length = 2.f;
-    static constexpr float density = 1.f;
-    static constexpr float friction = 0.3f;
+    // Color of all bones in this body
+    sf::Color body_color = sf::Color(255, 102, 102);
+    // Outline color of all bones in this body
+    sf::Color body_outline_color = sf::Color::Black;
+
+    /* Static const values common for all worm bodies. */
+    static constexpr float bone_width = 10.f;  // Width of each bone
+    static constexpr float bone_length = 2.f;  // Length of each bone
+
+    /* Static const values for Box2D usage. */
+    static constexpr float density = 1.f;  // Box2D density for each bone
+    static constexpr float friction = 0.3f;  // Box2D friction for each bone
+    // Box2D linear damping for each joint motor
     static constexpr float linear_damping = 0.f;
+    // Box2D angular damping for each joint motor
     static constexpr float angular_damping = 0.01f;
+    // Box2D motor speed for each joint motor
     static constexpr float motor_speed = 0.5f;
-    static constexpr float y_distance = 0.f;
+    // Box2D maximum motor torque
     static constexpr float max_motor_torque = 200000.f;
+    // Y offset for Box2D body definitions
+    static constexpr float y_distance = 0.f;
+    // Initial x position of Box2D body definitions
+    static constexpr float x_position = -15.f;
+    // Box2D collision category bits
     static constexpr int category_bits = 1;
+    // Box2D collision mask bits
     static constexpr int mask_bits = 2;
 };
 
