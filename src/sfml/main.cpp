@@ -32,10 +32,31 @@ int main() {
           window.close();
           break;
 
+        case sf::Event::KeyPressed:
+          // {
+          // auto key = event.key.code;
+          // switch (key) {
+          //   case sf::Keyboard::Right:
+          //     camera_offset += 5.f;
+          //   case sf::Keyboard::Left:
+          //     camera_offset -= 5.f;
+          //   case sf::Keyboard::Space:
+          //     camera_offset = 0;
+          //   default:
+          //     break;
+          // }
+          // }
+          if(event.key.code == sf::Keyboard::Right)
+            camera_offset += 5.f;
+          if(event.key.code == sf::Keyboard::Left)
+            camera_offset += -5.f;
+          if(event.key.code == sf::Keyboard::Space) //Recenter to worm
+            camera_offset = 0;
         default:
           break;
       }
     }
+
 
     engine.step();
     window.clear(sf::Color::White);
