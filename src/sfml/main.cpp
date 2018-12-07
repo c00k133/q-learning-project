@@ -20,11 +20,12 @@ int main() {
 
   PhysicsEngine engine = PhysicsEngine();
   b2World* world = engine.getWorld();
-  auto worm = new WormBrain(world, 24);
+  auto worm = new WormBrain(world, 20, 4);
 
   while (window.isOpen()) {
-    auto xyy = worm->getBodyCoordinatesVector();
-    view.setCenter(xyy.x * scale + camera_offset, window_y_offset * scale);
+    auto body_coordinates = worm->getBodyCoordinatesVector();
+    view.setCenter(
+        body_coordinates.x * scale + camera_offset, window_y_offset * scale);
     window.setView(view);
 
     sf::Event event;
@@ -49,11 +50,11 @@ int main() {
                break;
            }
           break;
+
         default:
           break;
       }
     }
-
 
     engine.step();
     window.clear(sf::Color::White);
@@ -66,6 +67,7 @@ int main() {
     SFMLDrawer::drawTicks(window, scale, ground_dimensions.x);
 
     window.display();
+    std::cout << "round: " << worm->getCount() << std::endl;
   }
 
   delete worm;

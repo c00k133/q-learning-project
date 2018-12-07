@@ -30,6 +30,11 @@ class WormBody {
      * @return amount of bones
      */
     unsigned int getBoneAmount() const;
+    /**
+     * Getter for amount of joints in this WormBody.
+     * @return amount of joints
+     */
+     unsigned int getJointAmount() const;
 
     /**
      * Getter for all bones in this WormBody.

@@ -6,6 +6,10 @@
 #include "Box2D/Box2D.h"
 
 
+#define WORMBRAIN_DEFAULT_MAX_ERROR 3
+#define WORMBRAIN_DEFAULT_BONE_AMOUNT 3
+
+
 /**
  * Class WormBrain: represents the brains of our first movable creature, the
  * worm.
@@ -27,7 +31,7 @@ class WormBrain {
        WormBody* body,
        QLearning* qLearning,
        int precision,
-       float max_error = 3);
+       float max_error = WORMBRAIN_DEFAULT_MAX_ERROR);
 
     /**
      * WormBrain constructor.
@@ -36,15 +40,15 @@ class WormBrain {
      *
      * @param world world that the worm body moves in
      * @param precision precision used in angle calculations
-     * @param max_error maximum allowed error for bot joint rotation
      * @param bone_amount amount of bones in the worm body,
      *                    must be larger than 0, defaults to 3
+     * @param max_error maximum allowed error for bot joint rotation
      */
     WormBrain(
             b2World* world,
             int precision,
-            float max_error = 3,
-            unsigned int bone_amount = 3);
+            unsigned int bone_amount = WORMBRAIN_DEFAULT_BONE_AMOUNT,
+            float max_error = WORMBRAIN_DEFAULT_MAX_ERROR);
 
     /**
      * WormBrain destructor.
@@ -87,6 +91,20 @@ class WormBrain {
      */
     int getCount();
 
+    /**
+     * Setter for acting randomly.
+     * If true the worm will not search for optimal target, but include some
+     * randomness.
+     * @param choice
+     */
+    void setRandomActs(bool choice);
+
+    /**
+     * Setter for debugging frequency, set to 0 for no printing.
+     * @param frequency debugging frequency
+     */
+    void setDebug(unsigned int frequency);
+
  private:
     /**
      * Common initialization method for all brain constructors.
@@ -119,19 +137,34 @@ class WormBrain {
      * @param change the amount of change
      * @return true if withing bounds, false otherwise
      */
-    bool inspectAngle(unsigned int index, double change = 0) const;
+    inline bool inspectAngle(unsigned int index, double change = 0) const;
+    /**
+     * Helper function checking if we can continue with the q learning or have
+     * to convert back to older angles.
+     * @return true if we may continue, false otherwise
+     */
+    bool inspectAngles();
+
+    // Save the last angles to see if anything gets stuck
+    // When doing this the worm stops being lazy and moves properly
+    std::vector<float> saved_angles;
 
     WormBody* body;  // Controlled bot body object
     QLearning* qLearning;  // Queried Q learning object
 
-    // Current position of body in the world
+    // Current x position of body in the world
     float current_body_position_x = 0.0f;
+
+    // Debugging frequency, 0 for no printing
+    unsigned int debug_frequency = 0;
 
     double rotate_size;  // Size of joint angle rotation
     double maximum_error;  // Maximum error allowed for rotation
 
     int precision;  // Precision for use within angle calculations
     int count;  // Incremented counter for calls on process
+
+    bool random_act = false;  // Should the worm take random actions?
 
     int next_rotation = 0;  // Rotation to take in future iteration
     unsigned int next_action = 0;  // Action to take in future iteration
