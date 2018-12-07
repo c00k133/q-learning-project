@@ -21,11 +21,6 @@ int TestUtils::setBoundsAndGetInt(int lower, int upper) {
   return getRandomInt();
 }
 
-WormBody TestUtils::createWormBody(int vector_length, int default_value) const {
-  std::vector<int> angles = std::vector<int>(vector_length, default_value);
-  return WormBody(angles);
-}
-
 std::vector<std::vector<double>> TestUtils::create2DVector(
         unsigned long columns,
         unsigned long rows,

@@ -1,95 +1,196 @@
-#include <vector>
+#include <string>
+#include <sstream>
 
 #include "body.hpp"
 #include "Box2D/Box2D.h"
+#include "body-exceptions.hpp"
 
 
-WormBody::WormBody(
-        std::vector<int> list,
-        unsigned int len
-) : angles(list), len(len) {}
-
-void WormBody::increase_angle(int num) {
-  change_angle(num, angle_change);
-}
-
-void WormBody::decrease_angle(int num) {
-  change_angle(num, -angle_change);
-}
-
-void WormBody::change_angle(int num, int change) {
-  angles[num] += change;
-  count++;
-}
-
-int WormBody::getAngleChange() const {
-  return angle_change;
-}
-
-unsigned int WormBody::get_len() const {
-  return len;
-}
-
-int WormBody::get_angle(unsigned int num) const {
-  return angles[num];
-}
-
-unsigned long WormBody::get_joint_amount() const {
-  return angles.size();
-}
-
-unsigned int WormBody::get_count() const {
-  return count;
-}
-
-const std::vector<int> WormBody::get_all_angles() const {
-  return angles;
-}
-
-b2Body* WormBody::createB2Body(b2World* world) const {
-  // The amount of joints the user wants the worm to have
-  unsigned long joints_wanted = get_joint_amount();
-
-  // prev_body is a variable that tells where the new joint should connect
-  b2Body* prev_body = createBone(world);
-  b2Body* new_body = nullptr;
-
-  // Define another bone and connect it to the previous one with a joint
-  for (unsigned joint = 0; joint < joints_wanted; joint++) {
-    new_body = createBone(world);
-
-    // Defining the joint that links the first bone to the second
-    b2RevoluteJointDef joint_def;
-    joint_def.Initialize(prev_body, new_body, b2Vec2(0.0f, 5.0f));
-    joint_def.motorSpeed = 5.0f;
-    joint_def.maxMotorTorque = 10.0f;
-    joint_def.enableMotor = true;
-    world->CreateJoint(&joint_def);
-
-    prev_body = new_body;
+void WormBody::init(unsigned int bone_amount) {
+  if (bone_amount == 0) {
+    throw QLearningExceptions::BodyRuntimeException(
+        "Bone amount has to be greater than zero!");
   }
 
-  return prev_body;
+  joints = std::vector<b2Joint*>(bone_amount - 1);
+  bones = std::vector<b2Body*>(bone_amount);
 }
 
-b2Body* WormBody::createBone(b2World* world) const {
-  b2PolygonShape bone;
-  bone.SetAsBox(bone_width, bone_length);
+WormBody::WormBody(unsigned int bone_amount) : bone_amount(bone_amount) {
+  init(bone_amount);
+}
 
-  // Define the dynamic body, we set its position and call the body factory
+WormBody::WormBody(
+        b2World* world,
+        unsigned int bone_amount) :
+        bone_amount(bone_amount) {
+  init(bone_amount);
+  createBodyParts(world);
+}
+
+void WormBody::checkInitialization(std::string message) const {
+  if (!initialized) {
+    throw QLearningExceptions::BodyRuntimeException(message);
+  }
+}
+
+const b2Joint* WormBody::getJoint(unsigned int index) const {
+  if (index >= joints.size()) {
+    throw QLearningExceptions::BodyRuntimeException(
+            "Index "
+            + std::to_string(index)
+            + " is larger than or equal to joints list length: "
+            + std::to_string(joints.size()));
+  }
+
+  return joints[index];
+}
+
+float32 WormBody::getJointAngle(unsigned int index) const {
+  auto tmp = (b2RevoluteJoint*) getJoint(index);
+  return tmp->GetJointAngle();
+}
+
+unsigned int WormBody::getBoneAmount() const {
+  return bone_amount;
+}
+
+std::vector<b2Body*> WormBody::getBones() const {
+  checkInitialization("Bot bones not initialized!");
+  return bones;
+}
+
+std::vector<b2Joint*> WormBody::getJoints() const {
+  checkInitialization("Bot joints not initialized!");
+  return joints;
+}
+
+void WormBody::setJointAngle(unsigned int index, float angle) {
+  float32 current_angle = getJointAngle(index);
+
+  float32 lower, upper, direction;
+  bool motor_enabled = true;
+  if (current_angle == angle) {
+    lower = current_angle;
+    upper = current_angle;
+    direction = 0.f;
+    motor_enabled = false;
+  } else {
+    bool larger = current_angle > angle;
+    lower = larger ? angle : current_angle;
+    upper = larger ? current_angle : angle;
+    direction = larger ? -1.f : 1.f;
+  }
+
+  auto joint = (b2RevoluteJoint*) getJoint(index);
+  joint->SetLimits(lower, upper);
+  joint->SetMotorSpeed(motor_speed * direction);
+  joint->EnableMotor(motor_enabled);
+}
+
+const std::tuple<float, float> WormBody::getCoordinatesTuple() const {
+  float x = 0.f;
+  float y = 0.f;
+
+  for (auto bone : bones) {
+    auto tmp = bone->GetWorldCenter();
+    x += tmp.x;
+    y += tmp.y;
+  }
+
+  x /= bones.size();
+  y /= bones.size();
+  return std::make_tuple(x, y);
+}
+
+const b2Vec2 WormBody::getCoordinatesVector() const {
+  std::tuple<float, float> tmp = getCoordinatesTuple();
+  return b2Vec2(std::get<0>(tmp), std::get<1>(tmp));
+}
+
+const std::tuple<float, float> WormBody::getBoneDimensions() const {
+  return std::make_tuple(bone_width, bone_length);
+}
+
+b2BodyDef WormBody::createBodyDef() const {
   b2BodyDef body_def;
+
   body_def.type = b2_dynamicBody;
-  body_def.position.Set(0.0f, 13.0f);
-  b2Body* body = world->CreateBody(&body_def);
+  //body_def.position.Set(0.f, 13.f);
+  body_def.position.Set(-15.f, 0.f);
+  body_def.linearDamping = linear_damping;
+  body_def.angularDamping = angular_damping;
+  body_def.allowSleep = false;
+  body_def.awake = true;
 
-  b2FixtureDef fixture_def;
-  fixture_def.shape = &bone;
+  return body_def;
+}
+
+b2PolygonShape WormBody::createBodyShape() const {
+  b2PolygonShape body_shape;
+  body_shape.SetAsBox(bone_width, bone_length);
+
+  return body_shape;
+}
+
+b2FixtureDef WormBody::createBodyFixtureDef(const b2PolygonShape* shape) const {
+  b2FixtureDef body_fixture;
+  body_fixture.shape = shape;
   // Set the box density to be non-zero, so it will be dynamic
-  fixture_def.density = 1.0f;
+  body_fixture.density = density;
   // Override the default friction
-  fixture_def.friction = 0.3f;
+  body_fixture.friction = friction;
+  body_fixture.filter.categoryBits = category_bits;
+  body_fixture.filter.maskBits = mask_bits;
 
-  // Add the shape to the body
-  body->CreateFixture(&fixture_def);
-  return body;
+  return body_fixture;
+}
+
+inline int WormBody::calculateDistance(unsigned int index, int offset) const {
+  return ((int) bone_width) * index - offset;
+}
+
+b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
+  b2RevoluteJointDef joint_def;
+  joint_def.enableLimit = true;
+  joint_def.enableMotor = false;
+  joint_def.upperAngle = 0;
+  joint_def.lowerAngle = 0;
+  joint_def.motorSpeed = motor_speed;
+  joint_def.maxMotorTorque = max_motor_torque;
+
+  joint_def.Initialize(
+      bones[index - 1],
+      bones[index],
+      //b2Vec2(calculateDistance(index - 1), 0)
+      b2Vec2(calculateDistance(index - 1), 0)
+  );
+
+  return joint_def;
+}
+
+void WormBody::createBodyParts(b2World* world) {
+  // Set initialization flag to true
+  initialized = true;
+
+  b2BodyDef body_def = createBodyDef();
+  b2PolygonShape body_shape = createBodyShape();
+  b2FixtureDef body_fixture = createBodyFixtureDef(&body_shape);
+
+  //body_def.position.Set(0, y_distance);
+  body_def.position.Set(calculateDistance(0, 5), y_distance);
+  b2Body* first_body = world->CreateBody(&body_def);
+  first_body->CreateFixture(&body_fixture);
+
+  bones[0] = first_body;
+  for (unsigned int i = 1; i < bone_amount; ++i) {
+    //body_def.position.Set(calculateDistance(i, 0), y_distance);
+    body_def.position.Set(calculateDistance(i, 5), y_distance);
+    b2Body* body = world->CreateBody(&body_def);
+    body->CreateFixture(&body_fixture);
+    bones[i] = body;
+
+    b2RevoluteJointDef joint_def = createJoint(i);
+    joints[i - 1] = (b2RevoluteJoint*) world->CreateJoint(&joint_def);
+  }
 }

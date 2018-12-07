@@ -13,6 +13,8 @@ public:
                          const QPoint& Position,
                          const QSize& Size);
 
+    ~MyCanvas();
+
 private:
     void OnInit() override;
 
@@ -20,7 +22,8 @@ private:
 
     sf::Texture myImage;
     sf::Sprite mySprite;
-    sf::RenderWindow window;
+    sf::RenderWindow* window;
+    sf::View view;
 };
 
 #endif // MyCanvas_H

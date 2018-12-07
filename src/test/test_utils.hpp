@@ -12,7 +12,6 @@ class TestUtils {
     int getRandomInt();
     void setBounds(int lower, int upper);
     int setBoundsAndGetInt(int lower, int upper);
-    WormBody createWormBody(int vector_length, int default_value = 0) const;
     std::vector<std::vector<double>> create2DVector(
             unsigned long columns,
             unsigned long rows,

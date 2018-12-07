@@ -1,8 +1,12 @@
 #include "qsfmlwidget.h"
 
-QSFMLWidget::QSFMLWidget(QWidget* Parent, const QPoint& Position, const QSize& Size, int FrameTime) :
-QWidget       (Parent),
-myInitialized (false)
+QSFMLWidget::QSFMLWidget(
+        QWidget* Parent,
+        const QPoint& Position,
+        const QSize& Size,
+        int FrameTime) :
+        QWidget(Parent),
+        myInitialized(false)
 {
     // Setup some states to allow direct rendering into the widget
     setAttribute(Qt::WA_PaintOnScreen);
@@ -19,7 +23,6 @@ myInitialized (false)
     // Setup the timer
     myTimer.setInterval(FrameTime);
 }
-QSFMLWidget::~QSFMLWidget() {}
 
 void QSFMLWidget::showEvent(QShowEvent*)
 {

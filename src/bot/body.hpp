@@ -3,53 +3,72 @@
 
 #include <iostream>
 #include <vector>
+#include <tuple>
 
 #include "Box2D/Box2D.h"
 
 
-class BotBody {
- public:
-    ~BotBody() = default;
-    virtual b2Body* createB2Body(b2World* world) const = 0;
-};
+//class BotBody {
+// public:
+//    ~BotBody() = default;
+//};
 
-class WormBody : public BotBody {
+//class WormBody : public BotBody {
+class WormBody {
  public:
     /**
      * WormBody constructor.
-     * Take a list of angles and the length between joints for the worm as
-     * parameters.
-     * @param list list of angles
-     * @param len length between joint
+     * @param bone_amount amount of bones in this worm, minimum 1
      */
-    explicit WormBody(std::vector<int> list, unsigned int len = 1);
+    explicit WormBody(unsigned int bone_amount = 3);
+    explicit WormBody(b2World* world, unsigned int bone_amount = 3);
 
-    b2Body* createB2Body(b2World* world) const override;
+    unsigned int getBoneAmount() const;
+    std::vector<b2Body*> getBones() const;
+    std::vector<b2Joint*> getJoints() const;
 
-    unsigned int get_len() const;
-    int get_angle(unsigned int num) const;
-    unsigned long get_joint_amount() const;
-    unsigned int get_count() const;
+    const b2Joint* getJoint(unsigned int index) const;
+    float32 getJointAngle(unsigned int index) const;
 
-    /* Used for testing purposes */
-    int getAngleChange() const;
+    void setJointAngle(unsigned int index, float angle);
 
-    const std::vector<int> get_all_angles() const;
+    const b2Vec2 getCoordinatesVector() const;
+    const std::tuple<float, float> getCoordinatesTuple() const;
 
-    void increase_angle(int num);
-    void decrease_angle(int num);
+    const std::tuple<float, float> getBoneDimensions() const;
+
+    void createBodyParts(b2World* world);
 
  private:
-    b2Body* createBone(b2World* world) const;
-    void change_angle(int num, int change);
+    void init(unsigned int bone_amount);
 
-    std::vector<int> angles;
-    unsigned int len;
-    unsigned int count = 0;
+    b2BodyDef createBodyDef() const;
+    b2PolygonShape createBodyShape() const;
+    b2FixtureDef createBodyFixtureDef(const b2PolygonShape* shape) const;
+    b2RevoluteJointDef createJoint(unsigned int index) const;
 
-    static constexpr float bone_width = 0.5f;
-    static constexpr float bone_length = 2.0f;
-    static constexpr int angle_change = 10;
+    inline int calculateDistance(unsigned int index, int offset = 0) const;
+
+    void checkInitialization(std::string message) const;
+    bool initialized = false;
+
+    std::vector<b2Joint*> joints;
+    std::vector<b2Body*> bones;
+
+    unsigned int bone_amount;
+
+    // TODO(Cookie): check if these need to be changed later on
+    static constexpr float bone_width = 10.f;
+    static constexpr float bone_length = 2.f;
+    static constexpr float density = 1.f;
+    static constexpr float friction = 0.3f;
+    static constexpr float linear_damping = 0.f;
+    static constexpr float angular_damping = 0.01f;
+    static constexpr float motor_speed = 0.5f;
+    static constexpr float y_distance = 0.f;
+    static constexpr float max_motor_torque = 200000.f;
+    static constexpr int category_bits = 1;
+    static constexpr int mask_bits = 2;
 };
 
 #endif
