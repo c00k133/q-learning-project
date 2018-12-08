@@ -12,6 +12,8 @@ int main() {
   const unsigned int window_width = 1200;
   const unsigned int window_height = 600;
 
+  float camera_offset = 0.f;
+
   sf::View view(sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
   sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Testing");
   window.setFramerateLimit(60);
@@ -22,7 +24,7 @@ int main() {
 
   while (window.isOpen()) {
     auto xyy = worm->getBodyCoordinatesVector();
-    view.setCenter(xyy.x * scale, window_y_offset * scale);
+    view.setCenter(xyy.x * scale + camera_offset, window_y_offset * scale);
     window.setView(view);
 
     sf::Event event;
@@ -32,10 +34,26 @@ int main() {
           window.close();
           break;
 
+        case sf::Event::KeyPressed:
+           switch (event.key.code) {
+             case sf::Keyboard::Right:
+               camera_offset += 5.f;
+               break;
+             case sf::Keyboard::Left:
+               camera_offset -= 5.f;
+               break;
+             case sf::Keyboard::Space:
+               camera_offset = 0.f;
+               break;
+             default:
+               break;
+           }
+          break;
         default:
           break;
       }
     }
+
 
     engine.step();
     window.clear(sf::Color::White);
@@ -45,7 +63,7 @@ int main() {
     SFMLDrawer::drawGround(
             window, engine.getGround(), ground_dimensions, scale);
     SFMLDrawer::drawWorm(window, worm, scale);
-    SFMLDrawer::drawTicks(window, scale, ground_dimensions.y);
+    SFMLDrawer::drawTicks(window, scale, ground_dimensions.x);
 
     window.display();
   }
