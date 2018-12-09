@@ -18,5 +18,5 @@ cmake ..
 ```
 make
 ```
-4. Now you have a executable named `bot` under `src/build/bot/bot`
-    - This can be executed in a Unix shell by typing `./bot/bot`, given that you are in the `src/build/` folder.
+4. Now you have a executable named `qlearn` under `src/build/qlearn/`
+    - This can be executed in a Unix shell by typing `./qlearn/qlearn`, given that you are in the `src/build/` folder.

@@ -89,6 +89,8 @@ void QLearn::eventHandler() {
 }
 
 void QLearn::processWorms() {
+  // We process each worm with dynamic parallelism
+  // One process might take longer than others depending on precision
   #pragma omp parallel for schedule(dynamic, 1)
   for (auto worm = worms.begin(); worm < worms.end(); ++worm) {
     (*worm)->process();
