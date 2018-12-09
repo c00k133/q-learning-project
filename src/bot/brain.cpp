@@ -52,6 +52,14 @@ void WormBrain::setDebug(unsigned int frequency) {
   debug_frequency = frequency;
 }
 
+void WormBrain::setBodyColor(sf::Color body_color) {
+  body->setBodyColor(body_color);
+}
+
+void WormBrain::setBodyOutlineColor(sf::Color outline_color) {
+  body->setBodyOutlineColor(outline_color);
+}
+
 const b2Vec2 WormBrain::getBodyCoordinatesVector() const {
   return body->getCoordinatesVector();
 }

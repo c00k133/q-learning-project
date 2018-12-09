@@ -105,6 +105,18 @@ class WormBrain {
      */
     void setDebug(unsigned int frequency);
 
+    /**
+     * Setter for WormBody filling color.
+     * @param body_color the new color for the body bones
+     */
+    void setBodyColor(sf::Color body_color);
+
+    /**
+     * Setter for WormBody outline color.
+     * @param outline_color the new color for the outline of body bones
+     */
+    void setBodyOutlineColor(sf::Color outline_color);
+
  private:
     /**
      * Common initialization method for all brain constructors.
@@ -162,7 +174,7 @@ class WormBrain {
     double maximum_error;  // Maximum error allowed for rotation
 
     int precision;  // Precision for use within angle calculations
-    int count;  // Incremented counter for calls on process
+    int count = 0;  // Incremented counter for calls on process
 
     bool random_act = false;  // Should the worm take random actions?
 
