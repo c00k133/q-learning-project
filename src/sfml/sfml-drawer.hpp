@@ -1,6 +1,7 @@
 #ifndef Q_LEARNING_SFML_DRAWER_HPP
 #define Q_LEARNING_SFML_DRAWER_HPP
 
+#include <fstream>
 #include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"
@@ -9,16 +10,17 @@
 #define SFML_DRAWER_DEFAULT_GROUND_COLOR sf::Color::Black
 #define SFML_DRAWER_DEFAULT_SEPARATION 10
 #define SFML_DRAWER_DEFAULT_TEXT_SIZE 24
+#define SFML_DRAWER_DEFAULT_TICK_Y_POSITION 100.f
 
 
 /** Companion class for QLearn objects. */
 class SFMLDrawer {
- public:
+public:
     /**
      * Constructor for SFMLDrawer.
      * Draws chosen methods on input window, no other other initialization.
      */
-    explicit SFMLDrawer(sf::RenderWindow* window) : window(window) {}
+    explicit SFMLDrawer(sf::RenderWindow *window) : window(window) {}
 
     /**
      * Setter for scale used in scaling drawings on `window`.
@@ -34,10 +36,10 @@ class SFMLDrawer {
      * @param color color for ground, defaults to
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
-    void drawGround(b2Body* ground_body,
-            float ground_x_dimension,
-            float ground_y_dimension,
-            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+    void drawGround(b2Body *ground_body,
+                    float ground_x_dimension,
+                    float ground_y_dimension,
+                    sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
 
     /**
      * Draw input ground onto `window`, dimensions as b2Vec2.
@@ -47,15 +49,15 @@ class SFMLDrawer {
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
     void drawGround(
-          b2Body* ground_body,
-          b2Vec2 ground_dimensions,
-          sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+            b2Body *ground_body,
+            b2Vec2 ground_dimensions,
+            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
 
     /**
      * Draw one worm at a time.
      * @param worm input worm to be drawn
      */
-    void drawWorm(WormBrain* worm);
+    void drawWorm(WormBrain *worm);
 
     /**
      * Draw ground ticks for distance measurement.
@@ -68,13 +70,39 @@ class SFMLDrawer {
     void drawTicks(
             float ground_width,
             unsigned int separation = SFML_DRAWER_DEFAULT_SEPARATION,
-            unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE);
+            unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE,
+            float tick_y_position = SFML_DRAWER_DEFAULT_TICK_Y_POSITION);
 
 private:
+    // TODO(Cookie): move this to a utility library
+    /**
+     * Helper method for checking if file exists.
+     * Source:
+     *  https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+     * @param file_path path to file
+     * @return true if file exists, false otherwise
+     */
+    inline bool checkFileExistence(const std::string &file_path) const;
+
+    /* Helper method for extracting font files. */
+    sf::Font getFont() const;
+
     // Window onto which everything is drawn
-    sf::RenderWindow* window;
+    sf::RenderWindow *window;
     // Scaling of objects on window
     float scale = 1.f;
+
+    // Paths to different fonts
+    const std::vector<std::string> font_paths = {
+            // Copied to build by CMake
+            "./assets/Roboto-Medium.ttf",
+
+            // System specific default fallback font
+            // FIXME(Cookie): we should not rely on system specifics, this
+            //                hard-coded solution should not be our only
+            //                solution, maybe a config file?
+            "/usr/share/fonts/truetype/roboto/hinted/Roboto-Medium.ttf"
+    };
 };
 
 #endif  // Q_LEARNING_SFML_DRAWER_HPP

@@ -107,21 +107,42 @@ void SFMLDrawer::drawGround(
   }
  }
 
- void SFMLDrawer::drawTicks(
+inline bool SFMLDrawer::checkFileExistence(
+         const std::string &file_path) const {
+  if (FILE* file = fopen(file_path.c_str(), "r")) {
+    fclose(file);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+sf::Font SFMLDrawer::getFont() const {
+  sf::Font font;
+
+  // Try to find a font file
+  for (const std::string& fonts : font_paths) {
+    if (checkFileExistence(fonts)) {
+      if (!font.loadFromFile(fonts)) {
+        throw QLearningExceptions::BodyRuntimeException(
+                "Could not load font file: " + fonts);
+      }
+      return font;
+    }
+  }
+
+  // Return empty font object
+  return font;
+}
+
+void SFMLDrawer::drawTicks(
         float ground_width,
         unsigned int separation,
-        unsigned int text_size) {
+        unsigned int text_size,
+        float tick_y_position) {
 
-  // Load and set font from `.ttl` file
-   sf::Font font;
-   const std::string font_path =  // String path to `.ttl` file
-           "/usr/share/fonts/truetype/roboto/hinted/Roboto-Medium.ttf";
-//         "/usr/share/fonts/TTF/DejaVuSerif.ttf";
-   // FIXME(Cookie): create utility class, possibly with config file
-   if (!font.loadFromFile(font_path)) {
-     throw QLearningExceptions::BodyRuntimeException(
-             "Font path [" + font_path + "] was not found");
-   }
+   // Load and set font from font file
+   sf::Font font = getFont();
 
    // Styling of ticks
    sf::Text ticks;
@@ -134,12 +155,11 @@ void SFMLDrawer::drawGround(
      const int tick_number = i * separation;
      // Draw negative tick marks
      ticks.setString(std::to_string(-tick_number));
-     ticks.setPosition(sf::Vector2f(-tick_number * scale, 100.f));
+     ticks.setPosition(sf::Vector2f(-tick_number * scale, tick_y_position));
      window->draw(ticks);
      // Draw positive tick marks
      ticks.setString(std::to_string(tick_number));
-     ticks.setPosition(sf::Vector2f(tick_number * scale, 100.f));
+     ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
      window->draw(ticks);
    }
 }
-
