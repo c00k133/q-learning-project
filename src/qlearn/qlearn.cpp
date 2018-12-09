@@ -101,10 +101,12 @@ void QLearn::drawComponents() {
     drawer->drawWorm(worm);
   }
 
+  // Draw the ground based on PhsyicsEngine
   const b2Vec2 ground_dimensions = engine.getGroundDimensions();
   drawer->drawGround(
           engine.getGround(), ground_dimensions, ground_color);
 
+  // Draw ticks on ground
   drawer->drawTicks(ground_dimensions.x);
 }
 
@@ -112,6 +114,7 @@ void QLearn::run() {
   sf::View view(sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
 
   while (window->isOpen()) {
+    // Fix view according to the master worm
     auto master_coordinates = master_worm->getBodyCoordinatesVector();
     view.setCenter(
             scaleValue(master_coordinates.x) + camera_offset,
