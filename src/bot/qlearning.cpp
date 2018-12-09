@@ -1,6 +1,7 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
 
 #include "qlearning.hpp"
 
@@ -8,8 +9,9 @@
 QLearning::QLearning(
         unsigned int states,
         unsigned int actions,
-        double gamma
-) : states(states), actions(actions), gamma(gamma) {
+        double gamma,
+        double alpha
+) : states(states), actions(actions), gamma(gamma), alpha(alpha) {
   q_matrix =
     std::vector<std::vector<double>>(states, std::vector<double>(actions, 0.0));
 
@@ -23,6 +25,24 @@ unsigned int QLearning::getState() const {
 
 int QLearning::getAccuracy() const {
   return accuracy;
+}
+
+void QLearning::setDebug(unsigned int frequency) {
+  debug_frequency = frequency;
+}
+
+bool QLearning::print() const {
+  return debug_frequency != 0 && counter % debug_frequency == 0;
+}
+
+void QLearning::printMatrix() const {
+  for (unsigned int r = 0; r < states; ++r) {
+    std::cout << r << '\t';
+    for (unsigned int c = 0; c < actions; ++c) {
+      printf("%.4f\t", q_matrix[r][c]);
+    }
+    std::cout << std::endl;
+  }
 }
 
 float QLearning::setReward(float changeAmount) {
@@ -40,16 +60,29 @@ void QLearning::setFutureState(unsigned int state) {
   future_state = state;
 }
 
+void QLearning::setRandomBestAction(bool randomize) {
+  random_best_action = randomize;
+}
+
 unsigned int QLearning::calculateBestAction() {
-  unsigned int current_best = 0;
+  // Randomization here ensures that bots do have the same start position
+  unsigned int current_best = random_best_action ? rand() % actions : 0;
   double current_max = q_matrix[state][current_best];
 
-  for (unsigned int i = 1; i < actions; ++i) {
+  for (unsigned int i = random_best_action ? 0 : 1; i < actions; ++i) {
     if (q_matrix[state][i] > current_max) {
       current_max = q_matrix[state][i];
       current_best = i;
     }
   }
+
+  if (print()) {
+    std::cout
+      << "QLearning - best calculated action: "
+      << current_best
+      << std::endl;
+  }
+
   return current_best;
 }
 
@@ -60,6 +93,13 @@ double QLearning::getMaxActionValue(unsigned int state) {
     if (q_matrix[state][i] > current_max) {
       current_max = q_matrix[state][i];
     }
+  }
+
+  if (print()) {
+    std::cout
+      << "QLearning - max action value: "
+      << current_max
+      << std::endl;
   }
 
   return current_max;
@@ -94,6 +134,14 @@ unsigned int QLearning::getRandomAction(float curiosity) {
     }
   }
 
+  if (print()) {
+    std::cout
+      << "QLearning - "
+      << "sum: " << sum
+      << "count: " << count
+      << std::endl;
+  }
+
   return choose;
 }
 
@@ -102,7 +150,8 @@ inline double QLearning::calculateNewValue(
     double max_q,
     unsigned int next_action
 ) {
-  return reward - move_reward + gamma * max_q - q_matrix[state][next_action];
+  return alpha *
+      (reward - move_reward + gamma * max_q - q_matrix[state][next_action]);
 }
 
 void QLearning::updateMatrix(float reward, unsigned int next_action) {
@@ -114,4 +163,6 @@ void QLearning::updateMatrix(float reward, unsigned int next_action) {
 
   // Update state
   state = future_state;
+
+  ++counter;
 }

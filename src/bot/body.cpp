@@ -52,7 +52,11 @@ float32 WormBody::getJointAngle(unsigned int index) const {
 }
 
 unsigned int WormBody::getBoneAmount() const {
-  return bone_amount;
+  return (unsigned int) bones.size();
+}
+
+unsigned int WormBody::getJointAmount() const {
+  return (unsigned int) joints.size();
 }
 
 std::vector<b2Body*> WormBody::getBones() const {
@@ -86,6 +90,7 @@ void WormBody::setJointAngle(unsigned int index, float angle) {
     motor_enabled = false;
   } else {
     // We have to decide which way the joint motor will rotate
+    //std::cout << "curr a: " << current_angle << " | " << "t a: " << angle << std::endl;
     bool larger = current_angle > angle;
     lower = larger ? angle : current_angle;
     upper = larger ? current_angle : angle;
@@ -93,7 +98,7 @@ void WormBody::setJointAngle(unsigned int index, float angle) {
   }
 
   // Actually rotate the joint
-  auto joint = (b2RevoluteJoint*) getJoint(index);
+  auto joint = (b2RevoluteJoint*) getJoint(index);  // cast to get around const
   joint->SetLimits(lower, upper);
   joint->SetMotorSpeed(motor_speed * direction);
   joint->EnableMotor(motor_enabled);
