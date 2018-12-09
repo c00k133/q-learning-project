@@ -127,7 +127,7 @@ void SFMLDrawer::drawGround(
    sf::Text ticks;
    ticks.setFont(font);
    ticks.setCharacterSize(text_size);
-   ticks.setFillColor(sf::Color::White);
+   ticks.setColor(sf::Color::White);
 
    // Draw tick numbers on ground at `separation` intervals
    for (unsigned int i = 0; i < ground_width / separation; ++i) {
