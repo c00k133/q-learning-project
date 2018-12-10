@@ -6,8 +6,8 @@
 #include "Box2D/Box2D.h"
 
 
-#define WORMBRAIN_DEFAULT_MAX_ERROR 3
-#define WORMBRAIN_DEFAULT_BONE_AMOUNT 3
+#define WORMBRAIN_DEFAULT_MAX_ERROR 3.f
+#define WORMBRAIN_DEFAULT_BONE_AMOUNT 4
 
 
 /**
@@ -41,8 +41,10 @@ class WormBrain {
      * @param world world that the worm body moves in
      * @param precision precision used in angle calculations
      * @param bone_amount amount of bones in the worm body,
-     *                    must be larger than 0, defaults to 3
-     * @param max_error maximum allowed error for bot joint rotation
+     *                    must be larger than 0, defaults to
+     *                    WORMBRAIN_DEFAULT_BONE_AMOUNT
+     * @param max_error maximum allowed error for bot joint rotation, defaults
+     *                  to WORMBRAIN_DEFAULT_MAX_ERROR
      */
     WormBrain(
             b2World* world,
@@ -150,16 +152,10 @@ class WormBrain {
      * @return true if withing bounds, false otherwise
      */
     inline bool inspectAngle(unsigned int index, double change = 0) const;
-    /**
-     * Helper function checking if we can continue with the q learning or have
-     * to convert back to older angles.
-     * @return true if we may continue, false otherwise
-     */
-    bool inspectAngles();
 
-    // Save the last angles to see if anything gets stuck
+    // Save the last angle to see if anything gets stuck
     // When doing this the worm stops being lazy and moves properly
-    std::vector<float> saved_angles;
+    std::tuple<unsigned int, float> saved_angle = std::make_tuple(0, 0.f);
 
     WormBody* body;  // Controlled bot body object
     QLearning* qLearning;  // Queried Q learning object

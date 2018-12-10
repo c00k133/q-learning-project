@@ -4,6 +4,10 @@
 #include "body-exceptions.hpp"
 
 
+SFMLDrawer::SFMLDrawer(sf::RenderWindow* window) : window(window) {
+  font = getFont();
+}
+
 void SFMLDrawer::setScale(float new_scale) {
   scale = new_scale;
 }
@@ -141,14 +145,11 @@ void SFMLDrawer::drawTicks(
         unsigned int text_size,
         float tick_y_position) {
 
-   // Load and set font from font file
-   sf::Font font = getFont();
-
    // Styling of ticks
    sf::Text ticks;
    ticks.setFont(font);
    ticks.setCharacterSize(text_size);
-   ticks.setColor(sf::Color::White);
+   ticks.setColor(text_color);
 
    // Draw tick numbers on ground at `separation` intervals
    for (unsigned int i = 0; i < ground_width / separation; ++i) {
@@ -162,4 +163,25 @@ void SFMLDrawer::drawTicks(
      ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
      window->draw(ticks);
    }
+}
+
+void SFMLDrawer::drawWormInformation(
+    WormBrain *worm, sf::Vector2f position, unsigned int text_size) {
+  sf::Text information;
+  information.setFont(font);
+  information.setCharacterSize(text_size);
+  information.setColor(text_color);
+
+  // String stream for string formatting
+  std::stringstream worm_information;
+
+  worm_information << "Iterations: " << worm->getCount();
+  worm_information << "\nx position: ";
+  const float worm_x_position = worm->getBodyCoordinatesVector().x;
+  worm_information << std::fixed << std::setprecision(2) << worm_x_position;
+
+  information.setString(worm_information.str());
+  information.setPosition(position);
+
+  window->draw(information);
 }

@@ -19,8 +19,10 @@ QLearn::QLearn(
 
   // Set master worm, used for centering camera.
   master_worm = createWormBrain(20, 4);
-
   worms.push_back(master_worm);
+
+  view = sf::View(
+      sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
 }
 
 QLearn::~QLearn() {
@@ -55,14 +57,17 @@ inline float QLearn::scaleValue(float value) const {
 
 void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
   switch (key_press) {
-    case sf::Keyboard::Right:
-      camera_offset += 5.f;
+    case sf::Keyboard::Right: case sf::Keyboard::Left:
+      if (follow_master) {
+        follow_master = false;
+        camera_offset = scaleValue(master_worm->getBodyCoordinatesVector().x);
+      }
+      camera_offset += key_press == sf::Keyboard::Right ? 5.f : -5.f;
       break;
-    case sf::Keyboard::Left:
-      camera_offset -= 5.f;
-      break;
+
     case sf::Keyboard::Space:
       camera_offset = 0.f;
+      follow_master = true;
       break;
 
     default:
@@ -103,24 +108,40 @@ void QLearn::drawComponents() {
     drawer->drawWorm(worm);
   }
 
-  // Draw the ground based on PhsyicsEngine
+  // Draw the ground based on PhysicsEngine
   const b2Vec2 ground_dimensions = engine.getGroundDimensions();
   drawer->drawGround(
           engine.getGround(), ground_dimensions, ground_color);
 
   // Draw ticks on ground
   drawer->drawTicks(ground_dimensions.x);
+
+  // Draw information about the current master worm
+  // TODO(Cookie): find a better way to calculate these
+  const float x_dimension = view.getSize().x / 2 - 3 * scale;
+  const float y_dimension = view.getSize().y / 2 - 53 * scale;
+  auto information_position =
+      view.getCenter() - sf::Vector2f(x_dimension, y_dimension);
+  drawer->drawWormInformation(master_worm, information_position);
+}
+
+void QLearn::setViewCenter() {
+  float x_view;
+  if (follow_master) {
+    auto master_coordinates = master_worm->getBodyCoordinatesVector();
+    x_view = scaleValue(master_coordinates.x);
+  } else {
+    x_view = camera_offset;
+  }
+
+  float y_view = scaleValue(window_y_offset);
+  view.setCenter(x_view, y_view);
 }
 
 void QLearn::run() {
-  sf::View view(sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
-
   while (window->isOpen()) {
     // Fix view according to the master worm
-    auto master_coordinates = master_worm->getBodyCoordinatesVector();
-    view.setCenter(
-            scaleValue(master_coordinates.x) + camera_offset,
-            scaleValue(window_y_offset));
+    setViewCenter();
     window->setView(view);
 
     engine.step();

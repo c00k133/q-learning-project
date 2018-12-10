@@ -98,7 +98,12 @@ class QLearn {
      */
     void drawComponents();
 
+    /** Helper method for setting the center of the view. */
+    void setViewCenter();
+
     sf::RenderWindow* window;  // SFML window where the action happens
+    sf::View view;  // View used in addition to window
+
     SFMLDrawer* drawer;  // Companion SFMLDrawer object
     PhysicsEngine engine;  // The physics engine for this specific instance
 
@@ -106,6 +111,8 @@ class QLearn {
     std::vector<WormBrain*> worms;  // All saved worm instances
 
     std::string heading;  // Title heading of the created SFML window
+
+    bool follow_master = true;  // Should the view follow the master worm?
 
     float scale = 10.f;  // Scaling of drawings on the SFML window
     float camera_offset = 0.f;  // X offset of camera in SFML window

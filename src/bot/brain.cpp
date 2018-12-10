@@ -30,8 +30,6 @@ WormBrain::WormBrain(
   auto joint_amount = body->getJointAmount();
   auto states = (unsigned int) pow(precision, joint_amount);
   qLearning = new QLearning(states, 1 + joint_amount * 2);
-
-  saved_angles = std::vector<float>(joint_amount, 0.f);
 }
 
 WormBrain::~WormBrain() {
@@ -110,24 +108,11 @@ inline bool WormBrain::inspectAngle(unsigned int index, double change) const {
   return diff <= maximum_error && diff >= -maximum_error;
 }
 
-bool WormBrain::inspectAngles() {
-  unsigned int joint_amount = body->getJointAmount();
-  bool flag = true;
-
-  for (unsigned int i = 0; i < joint_amount; ++i) {
-    float saved_angle = saved_angles[i];
-    if (!inspectAngle(i, saved_angle)) {
-      body->setJointAngle(i, saved_angle);
-      flag = false;
-    }
-  }
-
-  return flag;
-}
-
 void WormBrain::process() {
-  bool will_continue = inspectAngles();
-  if (will_continue) {
+  unsigned int last_joint = std::get<0>(saved_angle);
+  float last_angle = std::get<1>(saved_angle);
+
+  if (inspectAngle(last_joint, last_angle)) {
     // Calculate reward based on movement in x direction
     float worm_position_x = std::get<0>(body->getCoordinatesTuple());
     float reward = worm_position_x - current_body_position_x;
@@ -137,7 +122,9 @@ void WormBrain::process() {
     act(random_act);
 
     auto joint_angle_change = (float) rotate_size * next_rotation;
-    saved_angles[next_joint] += joint_angle_change;
+    saved_angle = std::make_tuple(next_joint, last_angle + joint_angle_change);
+  } else {
+    body->setJointAngle(last_joint, last_angle);
   }
 
   ++count;
