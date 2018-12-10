@@ -60,9 +60,12 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
     case sf::Keyboard::Right: case sf::Keyboard::Left:
       if (follow_master) {
         follow_master = false;
-        camera_offset = scaleValue(master_worm->getBodyCoordinatesVector().x);
+        const float current_master_x =
+            master_worm->getBodyCoordinatesVector().x;
+        camera_offset = scaleValue(current_master_x);
       }
-      camera_offset += key_press == sf::Keyboard::Right ? 5.f : -5.f;
+      camera_offset += key_press == sf::Keyboard::Right ?
+          QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
     case sf::Keyboard::Space:

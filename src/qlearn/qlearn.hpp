@@ -9,6 +9,7 @@
 #define QLEARN_DEFAULT_WINDOW_WIDTH 1200
 #define QLEARN_DEFAULT_WINDOW_HEIGHT 600
 #define QLEARN_DEFAULT_WORM_COLOR sf::Color::Green
+#define QLEARN_CAMERA_OFFSET_INCREMENT 5.f
 
 
 namespace QLearnUtils {
@@ -113,9 +114,9 @@ class QLearn {
     std::string heading;  // Title heading of the created SFML window
 
     bool follow_master = true;  // Should the view follow the master worm?
+    float camera_offset = 0.f;  // X offset of camera in SFML window
 
     float scale = 10.f;  // Scaling of drawings on the SFML window
-    float camera_offset = 0.f;  // X offset of camera in SFML window
     unsigned int window_width;  // SFML window width
     unsigned int window_height;  // SFML window height
 
