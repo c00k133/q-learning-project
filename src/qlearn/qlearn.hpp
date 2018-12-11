@@ -135,6 +135,7 @@ class QLearn {
     SFMLDrawer* drawer;  // Companion SFMLDrawer object
     PhysicsEngine engine;  // The physics engine for this specific instance
 
+    int master_worm_index = 0;  // Index of master worm in `worms`
     WormBrain* master_worm;  // Master worm which the SFML view defaults to
     std::vector<WormBrain*> worms;  // All saved worm instances
 

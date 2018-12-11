@@ -126,6 +126,17 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       printHelp();
       break;
 
+    case sf::Keyboard::M:
+      master_worm_index = (master_worm_index + 1) % (unsigned int) worms.size();
+      master_worm = worms[master_worm_index];
+      break;
+
+    case sf::Keyboard::N:
+      master_worm_index = master_worm_index - 1 < 0 ?
+          (int) worms.size() - 1 : master_worm_index - 1;
+      master_worm = worms[master_worm_index];
+      break;
+
     default:
       break;
   }
