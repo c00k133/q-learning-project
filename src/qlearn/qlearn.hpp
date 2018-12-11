@@ -21,12 +21,10 @@ namespace QLearnUtils {
      * bone color for a WormBody object.
      */
     struct WormType {
-        //int precision = 10;
-        //unsigned int bone_amount = 4;
-        //sf::Color color = QLEARN_DEFAULT_WORM_COLOR;
         int precision;
         unsigned int bone_amount;
         sf::Color color;
+        std::string name;
     };
 }
 
@@ -81,14 +79,16 @@ class QLearn {
      * @return pointer to newly created WormBrain
      */
     inline WormBrain* createWormBrain(
-            int precision, unsigned int bone_amount) const;
+            int precision,
+            unsigned int bone_amount,
+            std::string name = WORMBRAIN_DEFAULT_NAME) const;
 
     /**
      * Create a WormBrain of specific WormType flavor.
      * @param worm_type the flavor fo the WormBrain
      * @return pointer to newly created WormBrain flavor
      */
-    WormBrain* createWormType(QLearnUtils::WormType worm_type) const;
+    WormBrain* createWormType(QLearnUtils::WormType& worm_type) const;
 
     /**
      * Insert a certain amount of WormBrains with `worm_type` flavor to vector
@@ -144,6 +144,7 @@ class QLearn {
     bool follow_master = true;  // Should the view follow the master worm?
     float camera_offset = 0.f;  // X offset of camera in SFML window
 
+    float zoom_value = 1.f;
     float scale = 10.f;  // Scaling of drawings on the SFML window
     unsigned int window_width;  // SFML window width
     unsigned int window_height;  // SFML window height

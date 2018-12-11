@@ -4,7 +4,8 @@
 #include "body.hpp"
 
 
-void WormBrain::init(int in_precision, float max_error) {
+void WormBrain::init(int in_precision, float max_error, std::string _name) {
+  name = _name;
   precision = in_precision;
   rotate_size = 2.0 * M_PI / precision;
   maximum_error = rotate_size / max_error;
@@ -14,17 +15,19 @@ WormBrain::WormBrain(
         WormBody* body,
         QLearning* qLearning,
         int precision,
-        float max_error
+        float max_error,
+        std::string name
 ): body(body), qLearning(qLearning) {
-  init(precision, max_error);
+  init(precision, max_error, name);
 }
 
 WormBrain::WormBrain(
         b2World *world,
         int precision,
         unsigned int bone_amount,
-        float max_error) {
-  init(precision, max_error);
+        float max_error,
+        std::string name) {
+  init(precision, max_error, name);
 
   body = new WormBody(world, bone_amount);
   auto joint_amount = body->getJointAmount();
@@ -39,6 +42,10 @@ WormBrain::~WormBrain() {
 
 int WormBrain::getCount() {
   return count;
+}
+
+const std::string WormBrain::getName() const {
+  return name;
 }
 
 void WormBrain::setRandomActs(bool choice) {

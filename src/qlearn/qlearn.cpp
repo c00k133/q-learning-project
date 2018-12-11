@@ -11,7 +11,7 @@ void QLearn::init() {
   drawer->setScale(scale);
 
   // Set master worm, used for centering camera.
-  master_worm = createWormBrain(20, 4);
+  master_worm = createWormBrain(20, 4, "Master");
   worms.push_back(master_worm);
 
   view = sf::View(
@@ -43,34 +43,43 @@ QLearn::QLearn(unsigned int amount,
   QLearnUtils::WormType worm_type = {
       precision,
       bone_amount,
-      QLEARN_DEFAULT_WORM_COLOR
+      QLEARN_DEFAULT_WORM_COLOR,
+      WORMBRAIN_DEFAULT_NAME
   };
   insertToWorms(amount, worm_type);
 }
 
 QLearn::~QLearn() {
-  // Deleter each worm
+  // Delete each worm
   for (auto worm : worms) {
     delete worm;
   }
 }
 
 inline WormBrain* QLearn::createWormBrain(
-        int precision, unsigned int bone_amount) const {
-  return new WormBrain(engine.getWorld(), precision, bone_amount);
+        int precision, unsigned int bone_amount, std::string name) const {
+  return new WormBrain(
+          engine.getWorld(),
+          precision,
+          bone_amount,
+          WORMBRAIN_DEFAULT_MAX_ERROR,
+          name);
 }
 
-WormBrain* QLearn::createWormType(QLearnUtils::WormType worm_type) const {
-  WormBrain* worm = createWormBrain(worm_type.precision, worm_type.bone_amount);
+WormBrain* QLearn::createWormType(QLearnUtils::WormType& worm_type) const {
+  WormBrain* worm = createWormBrain(
+          worm_type.precision, worm_type.bone_amount, worm_type.name);
   worm->setBodyColor(worm_type.color);
   return worm;
 }
 
 void QLearn::insertToWorms(
         unsigned int amount, QLearnUtils::WormType worm_type) {
+  std::string original_name = worm_type.name;
   for (unsigned int i = 0; i < amount; ++i) {
-     WormBrain* worm = createWormType(worm_type);
-     worms.push_back(worm);
+    worm_type.name = original_name + std::to_string(i + 1);
+    WormBrain* worm = createWormType(worm_type);
+    worms.push_back(worm);
   }
 }
 
@@ -79,13 +88,13 @@ inline float QLearn::scaleValue(float value) const {
 }
 
 void QLearn::printHelp() const {
-  std::ifstream istr(help_file_path);
-  if (istr.rdstate() & (istr.failbit | istr.badbit)) {
+  std::ifstream file_stream(help_file_path);
+  if (file_stream.rdstate() & (file_stream.failbit | file_stream.badbit)) {
     std::cerr << "Failed to load help file!" << std::endl;
   } else {
-    while (!istr.eof()) {
+    while (!file_stream.eof()) {
       std::string line;
-      std::getline(istr, line);
+      std::getline(file_stream, line);
       std::cout << line << std::endl;
     }
   }
@@ -104,18 +113,21 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
-    /*
-    case sf::Keyboard::Up: case sf::Keyboard::Down:
-      // FIXME(Cookie): is buggy
-      view.zoom(1.f + key_press == sf::Keyboard::Up ?
-          QLEARN_CAMERA_ZOOM_INCREMENT : -QLEARN_CAMERA_ZOOM_INCREMENT);
+    case sf::Keyboard::Up:
+      view.zoom(1.f - QLEARN_CAMERA_ZOOM_INCREMENT);
+      zoom_value -= QLEARN_CAMERA_ZOOM_INCREMENT;
       break;
-    */
+
+    case sf::Keyboard::Down:
+      view.zoom(1.f + QLEARN_CAMERA_ZOOM_INCREMENT);
+      zoom_value += QLEARN_CAMERA_ZOOM_INCREMENT;
+      break;
 
     case sf::Keyboard::Space:
       camera_offset = 0.f;
       follow_master = true;
-      view.zoom(1.f);
+      view.zoom(1.f / zoom_value);
+      zoom_value = 1.f;
       break;
 
     case sf::Keyboard::Escape:

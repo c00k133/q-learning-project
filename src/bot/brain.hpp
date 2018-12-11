@@ -8,6 +8,7 @@
 
 #define WORMBRAIN_DEFAULT_MAX_ERROR 3.f
 #define WORMBRAIN_DEFAULT_BONE_AMOUNT 4
+#define WORMBRAIN_DEFAULT_NAME "Wurmy"
 
 
 /**
@@ -31,7 +32,8 @@ class WormBrain {
        WormBody* body,
        QLearning* qLearning,
        int precision,
-       float max_error = WORMBRAIN_DEFAULT_MAX_ERROR);
+       float max_error = WORMBRAIN_DEFAULT_MAX_ERROR,
+       std::string name = WORMBRAIN_DEFAULT_NAME);
 
     /**
      * WormBrain constructor.
@@ -50,7 +52,8 @@ class WormBrain {
             b2World* world,
             int precision,
             unsigned int bone_amount = WORMBRAIN_DEFAULT_BONE_AMOUNT,
-            float max_error = WORMBRAIN_DEFAULT_MAX_ERROR);
+            float max_error = WORMBRAIN_DEFAULT_MAX_ERROR,
+            std::string name = WORMBRAIN_DEFAULT_NAME);
 
     /**
      * WormBrain destructor.
@@ -94,6 +97,12 @@ class WormBrain {
     int getCount();
 
     /**
+     * Getter for private name.
+     * @return name of worm as std::string
+     */
+    const std::string getName() const;
+
+    /**
      * Setter for acting randomly.
      * If true the worm will not search for optimal target, but include some
      * randomness.
@@ -119,6 +128,12 @@ class WormBrain {
      */
     void setBodyOutlineColor(sf::Color outline_color);
 
+    /**
+     * Method for saving this WormBrain object to disk.
+     * @param file_name name of output file, if none given one will be created
+     */
+    void save(std::string file_name = nullptr);
+
  private:
     /**
      * Common initialization method for all brain constructors.
@@ -126,7 +141,7 @@ class WormBrain {
      * @param precision input precision used in angle calculations
      * @param max_error maximum allowed error for bot joint rotation
      */
-    void init(int precision, float max_error);
+    void init(int precision, float max_error, std::string name);
 
     /**
      * Method for updating the current brain state.
@@ -159,6 +174,8 @@ class WormBrain {
 
     WormBody* body;  // Controlled bot body object
     QLearning* qLearning;  // Queried Q learning object
+
+    std::string name;  // Name of this worm
 
     // Current x position of body in the world
     float current_body_position_x = 0.0f;

@@ -109,7 +109,7 @@ void SFMLDrawer::drawGround(
       fixture = fixture->GetNext();
     }
   }
- }
+}
 
 inline bool SFMLDrawer::checkFileExistence(
          const std::string &file_path) const {
@@ -175,7 +175,8 @@ void SFMLDrawer::drawWormInformation(
   // String stream for string formatting
   std::stringstream worm_information;
 
-  worm_information << "Iterations: " << worm->getCount();
+  worm_information << worm->getName() << " - ";
+  worm_information << "iterations: " << worm->getCount();
   worm_information << "\nx position: ";
   const float worm_x_position = worm->getBodyCoordinatesVector().x;
   worm_information << std::fixed << std::setprecision(2) << worm_x_position;
