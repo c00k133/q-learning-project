@@ -1,0 +1,6 @@
+Camera:
+    Right       focus off master worm and move right
+    Left        focus off master worm and move left
+    Space       focus back to master worm
+
+    Escape      exit window and close program

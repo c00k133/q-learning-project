@@ -10,6 +10,7 @@
 #define QLEARN_DEFAULT_WINDOW_HEIGHT 600
 #define QLEARN_DEFAULT_WORM_COLOR sf::Color::Green
 #define QLEARN_CAMERA_OFFSET_INCREMENT 5.f
+#define QLEARN_CAMERA_ZOOM_INCREMENT 0.05f
 
 
 namespace QLearnUtils {
@@ -20,9 +21,12 @@ namespace QLearnUtils {
      * bone color for a WormBody object.
      */
     struct WormType {
-        int precision = 10;
-        unsigned int bone_amount = 4;
-        sf::Color color = QLEARN_DEFAULT_WORM_COLOR;
+        //int precision = 10;
+        //unsigned int bone_amount = 4;
+        //sf::Color color = QLEARN_DEFAULT_WORM_COLOR;
+        int precision;
+        unsigned int bone_amount;
+        sf::Color color;
     };
 }
 
@@ -41,6 +45,23 @@ class QLearn {
             unsigned int window_height = QLEARN_DEFAULT_WINDOW_HEIGHT);
 
     /**
+     * QLearn constructor that creates multiple worms to the world.
+     * @param amount amount of extra worms
+     * @param precision precision of extra worms
+     * @param bone_amount amount of bones in extra worms
+     * @param heading name/title of SFML window
+     * @param window_width width of SFML window
+     * @param window_height height of SFML window
+     */
+    QLearn(
+        unsigned int amount,
+        int precision,
+        unsigned int bone_amount,
+        std::string heading = QLEARN_DEFAULT_NAME,
+        unsigned int window_width = QLEARN_DEFAULT_WINDOW_WIDTH,
+        unsigned int window_height = QLEARN_DEFAULT_WINDOW_HEIGHT);
+
+    /**
      * QLearn destructor, takes care of deleting all allocate memory.
      * E.g. all WormBrain objects.
      */
@@ -50,6 +71,9 @@ class QLearn {
     void run();
 
  private:
+    /** Common initialization method for constructors. */
+    void init();
+
     /**
      * Helper method for creating WormBrain objects within the current world.
      * @param precision precision of QLearning object for this WormBrain
@@ -102,6 +126,9 @@ class QLearn {
     /** Helper method for setting the center of the view. */
     void setViewCenter();
 
+    /** Method for printing help to std::cout. */
+    void printHelp() const;
+
     sf::RenderWindow* window;  // SFML window where the action happens
     sf::View view;  // View used in addition to window
 
@@ -127,6 +154,10 @@ class QLearn {
     // Constant y offset of the SFML window
     static constexpr float window_y_offset = -10.f;
     static constexpr unsigned int framerate_limit = 60;  // FPS in Hertz
+
+    // Path to help file
+    // TODO(Cookie): put this in a config file
+    const std::string help_file_path = "./assets/help.txt";
 };
 
 #endif  // Q_LEARNING_Q_LEARN

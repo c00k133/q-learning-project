@@ -1,16 +1,9 @@
 #include "qlearn.hpp"
 
 
-QLearn::QLearn(
-      std::string heading,
-      unsigned int window_width,
-      unsigned int window_height) :
-      heading(heading),
-      window_width(window_width),
-      window_height(window_height) {
-
+void QLearn::init() {
   window = new sf::RenderWindow(
-          sf::VideoMode(window_width, window_height), heading);
+      sf::VideoMode(window_width, window_height), heading);
   window->setFramerateLimit(framerate_limit);
 
   // Set companion object
@@ -23,6 +16,36 @@ QLearn::QLearn(
 
   view = sf::View(
       sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
+}
+
+QLearn::QLearn(
+      std::string heading,
+      unsigned int window_width,
+      unsigned int window_height) :
+      heading(heading),
+      window_width(window_width),
+      window_height(window_height) {
+  init();
+}
+
+QLearn::QLearn(unsigned int amount,
+               int precision,
+               unsigned int bone_amount,
+               std::string heading,
+               unsigned int window_width,
+               unsigned int window_height) :
+               heading(heading),
+               window_width(window_width),
+               window_height(window_height) {
+  init();
+
+  // Create extra worms
+  QLearnUtils::WormType worm_type = {
+      precision,
+      bone_amount,
+      QLEARN_DEFAULT_WORM_COLOR
+  };
+  insertToWorms(amount, worm_type);
 }
 
 QLearn::~QLearn() {
@@ -55,6 +78,19 @@ inline float QLearn::scaleValue(float value) const {
   return value * scale;
 }
 
+void QLearn::printHelp() const {
+  std::ifstream istr(help_file_path);
+  if (istr.rdstate() & (istr.failbit | istr.badbit)) {
+    std::cerr << "Failed to load help file!" << std::endl;
+  } else {
+    while (!istr.eof()) {
+      std::string line;
+      std::getline(istr, line);
+      std::cout << line << std::endl;
+    }
+  }
+}
+
 void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
   switch (key_press) {
     case sf::Keyboard::Right: case sf::Keyboard::Left:
@@ -68,9 +104,26 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
+    /*
+    case sf::Keyboard::Up: case sf::Keyboard::Down:
+      // FIXME(Cookie): is buggy
+      view.zoom(1.f + key_press == sf::Keyboard::Up ?
+          QLEARN_CAMERA_ZOOM_INCREMENT : -QLEARN_CAMERA_ZOOM_INCREMENT);
+      break;
+    */
+
     case sf::Keyboard::Space:
       camera_offset = 0.f;
       follow_master = true;
+      view.zoom(1.f);
+      break;
+
+    case sf::Keyboard::Escape:
+      window->close();
+      break;
+
+    case sf::Keyboard::H:
+      printHelp();
       break;
 
     default:
@@ -142,6 +195,8 @@ void QLearn::setViewCenter() {
 }
 
 void QLearn::run() {
+  printHelp();
+
   while (window->isOpen()) {
     // Fix view according to the master worm
     setViewCenter();
