@@ -91,6 +91,12 @@ class QLearn {
     WormBrain* createWormType(QLearnUtils::WormType& worm_type) const;
 
     /**
+     * Wrapper method for extracting master worm from `worms` vector.
+     * @return pointer to master worm
+     */
+    inline WormBrain* getMasterWorm() const;
+
+    /**
      * Insert a certain amount of WormBrains with `worm_type` flavor to vector
      * `worms`.
      * @param amount amount of WormBrains to be created
@@ -142,7 +148,6 @@ class QLearn {
     PhysicsEngine engine;  // The physics engine for this specific instance
 
     int master_worm_index = 0;  // Index of master worm in `worms`
-    WormBrain* master_worm;  // Master worm which the SFML view defaults to
     std::vector<WormBrain*> worms;  // All saved worm instances
 
     std::string heading;  // Title heading of the created SFML window

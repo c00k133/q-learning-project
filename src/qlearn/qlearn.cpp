@@ -12,8 +12,7 @@ void QLearn::init() {
   drawer->setScale(scale);
 
   // Set master worm, used for centering camera.
-  master_worm = createWormBrain(20, 4, "Master");
-  worms.push_back(master_worm);
+  worms.push_back(createWormBrain(20, 4, "Master"));
 
   view = sf::View(
       sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
@@ -77,6 +76,10 @@ WormBrain* QLearn::createWormType(QLearnUtils::WormType& worm_type) const {
   return worm;
 }
 
+inline WormBrain* QLearn::getMasterWorm() const {
+  return worms[master_worm_index];
+}
+
 void QLearn::insertToWorms(
         unsigned int amount, QLearnUtils::WormType worm_type) {
   std::string original_name = worm_type.name;
@@ -110,7 +113,7 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       if (follow_master) {
         follow_master = false;
         const float current_master_x =
-            master_worm->getBodyCoordinatesVector().x;
+            getMasterWorm()->getBodyCoordinatesVector().x;
         camera_offset = scaleValue(current_master_x);
       }
       camera_offset += key_press == sf::Keyboard::Right ?
@@ -147,14 +150,14 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       else
         master_worm_index = master_worm_index - 1 < 0 ?
             (int) worms.size() - 1 : master_worm_index - 1;
-
-      master_worm = worms[master_worm_index];
       break;
 
-    case sf::Keyboard::R:
+    case sf::Keyboard::R: {
+      const bool random_act = getMasterWorm()->getRandomAct();
       // Invert randomness of master worm
-      master_worm->setRandomActs(!master_worm->getRandomAct());
+      getMasterWorm()->setRandomActs(!random_act);
       break;
+    }
 
     case sf::Keyboard::P:
       run_physics = !run_physics;
@@ -219,13 +222,13 @@ void QLearn::drawComponents() {
   const float y_dimension = view.getSize().y / 2 - 53 * scale;
   auto information_position =
       view.getCenter() - sf::Vector2f(x_dimension, y_dimension);
-  drawer->drawWormInformation(master_worm, information_position);
+  drawer->drawWormInformation(getMasterWorm(), information_position);
 }
 
 void QLearn::setViewCenter() {
   float x_view;
   if (follow_master) {
-    auto master_coordinates = master_worm->getBodyCoordinatesVector();
+    auto master_coordinates = getMasterWorm()->getBodyCoordinatesVector();
     x_view = scaleValue(master_coordinates.x);
   } else {
     x_view = camera_offset;
