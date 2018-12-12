@@ -151,7 +151,7 @@ class QLearn {
     bool follow_master = true;  // Should the view follow the master worm?
     float camera_offset = 0.f;  // X offset of camera in SFML window
 
-    float zoom_value = 1.f;
+    float zoom_value = 1.f;  // Zoom increment value, used to reset zoom
     float scale = 10.f;  // Scaling of drawings on the SFML window
     unsigned int window_width;  // SFML window width
     unsigned int window_height;  // SFML window height

@@ -2,8 +2,9 @@
 
 
 void QLearn::init() {
+  sf::VideoMode video_mode(window_width, window_height);
   window = new sf::RenderWindow(
-      sf::VideoMode(window_width, window_height), heading);
+      video_mode, heading);
   window->setFramerateLimit(framerate_limit);
 
   // Set companion object
@@ -54,6 +55,9 @@ QLearn::~QLearn() {
   for (auto worm : worms) {
     delete worm;
   }
+
+  delete drawer;
+  delete window;
 }
 
 inline WormBrain* QLearn::createWormBrain(
@@ -184,12 +188,15 @@ void QLearn::eventHandler() {
 }
 
 void QLearn::processWorms() {
-  // We process each worm with dynamic parallelism
   // One process might take longer than others depending on precision
-  #pragma omp parallel for schedule(dynamic, 1)
   for (auto worm = worms.begin(); worm < worms.end(); ++worm) {
     (*worm)->process();
   }
+
+  // NOTE: we attempted to use parallelism here through openmp, but
+  //       unfortunately it introduced valgrind errors "possibly lost".
+  //       This might have been a false positive, but we are staying on the
+  //       on the safe side and ignoring parallelism for now.
 }
 
 void QLearn::drawComponents() {
