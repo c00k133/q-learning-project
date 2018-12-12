@@ -51,14 +51,6 @@ const b2Vec2 PhysicsEngine::getGroundDimensions() const {
   return b2Vec2(ground_width, ground_height);
 }
 
-float32 PhysicsEngine::getTimeStep() const {
-  return time_step;
-}
-
-void PhysicsEngine::setTimeStep(float32 new_time_step) {
-  time_step = new_time_step;
-}
-
 void PhysicsEngine::step() {
   world->Step(time_step, velocity_iterations, position_iterations);
 }

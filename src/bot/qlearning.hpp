@@ -20,14 +20,25 @@ class QLearning {
     QLearning(
             unsigned int states,
             unsigned int actions,
-            double gamma = 0.8);
+            double gamma = 0.8,
+            double alpha = 0.8);
 
     /**
      * Getter for current state of this Q object.
      * @return current state of this Q object
      */
      unsigned int getState() const;
+     /**
+      * Getter for accuracy
+      * @return accuracy as an int
+      */
      int getAccuracy() const;
+
+     /**
+      * Setter for debugging frequency, set to 0 for no printing.
+      * @param frequency debugging frequency
+      */
+     void setDebug(unsigned int frequency);
 
     /**
      * Setter for move reward.
@@ -48,6 +59,16 @@ class QLearning {
      * @param state new future state
      */
     void setFutureState(unsigned int state);
+
+    /**
+     * Setter for randomizing best action calculation.
+     * Setting this to true will randomize which initial best action is chosen
+     * before actually iterating through all actions. This being true will
+     * ensure that bots will initialize differently resulting in different
+     * learning outcomes.
+     * @param randomize true for randomization, false otherwise
+     */
+    void setRandomBestAction(bool randomize);
 
     /**
      * Calculates the best action in the Q-matrix in the current state.
@@ -74,6 +95,9 @@ class QLearning {
      */
     void updateMatrix(float reward, unsigned int next_action);
 
+    /** Method for printing the whole q-matrix. */
+    void printMatrix() const;
+
  private:
     /**
      * Get bounded values out of the Q-matrix.
@@ -99,6 +123,22 @@ class QLearning {
         double max_q,
         unsigned int next_action);
 
+    /**
+     * Helper method for checking when to print debugging info based on
+     * frequency.
+     * @return print if true, else do not
+     */
+    bool print() const;
+
+    // Randomize initial current best for varying learning results
+    bool random_best_action = true;
+
+    // Counter used for debugging.
+    unsigned int counter;
+
+    // Debugging frequency, 0 aor no printing
+    unsigned int debug_frequency = 0;
+
     unsigned int states;  // Number of states; number of matrix columns
     unsigned int actions;  // Number of actions; number of matrix rows
     std::vector<std::vector<double>> q_matrix;  // Storage for Q matrix
@@ -108,6 +148,7 @@ class QLearning {
 
     float move_reward = 0.1f;  // Reward for moving, default to 0.1f
     double gamma;  // Gamma value used in Q calculation, range 0.0 - 1.0
+    double alpha;  // Alpha value used in Q calculation, range 0.0 -1.0;
 
     // Accuracy used in calculations, same for all QLearning instances
     static const int accuracy = 100000;

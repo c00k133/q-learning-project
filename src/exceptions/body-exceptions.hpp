@@ -1,7 +1,7 @@
 #ifndef Q_LEARNING_BODY_EXCEPTIONS_HPP
 #define Q_LEARNING_BODY_EXCEPTIONS_HPP
 
-#include "qlearning-runtime-exception.hpp"
+#include "qlearning-exception.hpp"
 
 
 namespace QLearningExceptions {

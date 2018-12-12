@@ -4,7 +4,8 @@
 #include "body.hpp"
 
 
-void WormBrain::init(int in_precision, float max_error) {
+void WormBrain::init(int in_precision, float max_error, std::string _name) {
+  name = _name;
   precision = in_precision;
   rotate_size = 2.0 * M_PI / precision;
   maximum_error = rotate_size / max_error;
@@ -14,20 +15,22 @@ WormBrain::WormBrain(
         WormBody* body,
         QLearning* qLearning,
         int precision,
-        float max_error
+        float max_error,
+        std::string name
 ): body(body), qLearning(qLearning) {
-  init(precision, max_error);
+  init(precision, max_error, name);
 }
 
 WormBrain::WormBrain(
-        int precision,
         b2World *world,
+        int precision,
+        unsigned int bone_amount,
         float max_error,
-        unsigned int bone_amount) {
-  init(precision, max_error);
+        std::string name) {
+  init(precision, max_error, name);
 
   body = new WormBody(world, bone_amount);
-  auto joint_amount = (unsigned int) body->getJoints().size();
+  auto joint_amount = body->getJointAmount();
   auto states = (unsigned int) pow(precision, joint_amount);
   qLearning = new QLearning(states, 1 + joint_amount * 2);
 }
@@ -41,6 +44,31 @@ int WormBrain::getCount() {
   return count;
 }
 
+const std::string WormBrain::getName() const {
+  return name;
+}
+
+bool WormBrain::getRandomAct() const {
+  return random_act;
+}
+
+void WormBrain::setRandomActs(bool choice) {
+  random_act = choice;
+}
+
+void WormBrain::setDebug(unsigned int frequency) {
+  qLearning->setDebug(frequency);
+  debug_frequency = frequency;
+}
+
+void WormBrain::setBodyColor(sf::Color body_color) {
+  body->setBodyColor(body_color);
+}
+
+void WormBrain::setBodyOutlineColor(sf::Color outline_color) {
+  body->setBodyOutlineColor(outline_color);
+}
+
 const b2Vec2 WormBrain::getBodyCoordinatesVector() const {
   return body->getCoordinatesVector();
 }
@@ -49,16 +77,8 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
   return body->getCoordinatesTuple();
 }
 
-const std::tuple<float, float> WormBrain::getBodyBoneDimensions() const {
-  return body->getBoneDimensions();
-}
-
-std::vector<b2Body*> WormBrain::getBodyBones() const {
-  return body->getBones();
-}
-
-std::vector<b2Joint*> WormBrain::getBodyJoints() const {
-  return body->getJoints();
+const WormBody* WormBrain::getBody() const {
+  return body;
 }
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
@@ -76,9 +96,9 @@ unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
 
   double precision_joint = pow(precision, joint);
   auto old_angle =
-      static_cast<unsigned int>(state / precision_joint) % precision;
-  int new_angle = ((int) (old_angle + change) < 0 ?
-    precision + (old_angle + change) : old_angle + change) % precision;
+      static_cast<int>(state / precision_joint) % precision;
+  int combined = old_angle + change;
+  int new_angle = (combined + (combined < 0 ? precision : 0)) % precision;
 
   auto return_state = static_cast<unsigned int>(
       state + (new_angle - old_angle) * precision_joint);
@@ -93,24 +113,29 @@ void WormBrain::act(bool random, float curiosity) {
   qLearning->setFutureState(new_state);
 }
 
-bool WormBrain::inspectAngle(unsigned int index, double change) const {
+inline bool WormBrain::inspectAngle(unsigned int index, double change) const {
   float angle = body->getJointAngle(index);
   double diff = angle - change;
-  return diff > maximum_error || diff < -maximum_error;
+  return diff <= maximum_error && diff >= -maximum_error;
 }
 
 void WormBrain::process() {
-  float worm_position_x = std::get<0>(body->getCoordinatesTuple());
-  float reward = worm_position_x - current_body_position_x;
-  current_body_position_x = worm_position_x;
+  unsigned int last_joint = std::get<0>(saved_angle);
+  float last_angle = std::get<1>(saved_angle);
 
-  qLearning->updateMatrix(reward, next_action);
-  act(false);
+  if (inspectAngle(last_joint, last_angle)) {
+    // Calculate reward based on movement in x direction
+    float worm_position_x = std::get<0>(body->getCoordinatesTuple());
+    float reward = worm_position_x - current_body_position_x;
+    current_body_position_x = worm_position_x;
 
-  auto joint_angle_change = (float) rotate_size * next_rotation;
-  bool valid = inspectAngle(next_joint, joint_angle_change);
-  if (valid) {
-    body->setJointAngle(next_joint, joint_angle_change);
+    qLearning->updateMatrix(reward, next_action);
+    act(random_act);
+
+    auto joint_angle_change = (float) rotate_size * next_rotation;
+    saved_angle = std::make_tuple(next_joint, last_angle + joint_angle_change);
+  } else {
+    body->setJointAngle(last_joint, last_angle);
   }
 
   ++count;

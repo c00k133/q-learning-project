@@ -1,0 +1,15 @@
+Camera:
+    Right       focus off master worm and move right
+    Left        focus off master worm and move left
+    Up          zoom closer to worm
+    Down        zoom farther from worm
+    Space       focus back to master worm and reset zoom
+
+General:
+    M           change master worm to next in line
+    N           change master worm to previous in line
+    R           toggle the randomness of current master worm (this is indicated with "(R)"
+                by the name if the worm is acting randomly, "(O)" when being optimal)
+    P           toggle world iterations
+
+    Escape      exit window and close program
