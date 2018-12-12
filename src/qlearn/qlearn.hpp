@@ -129,6 +129,12 @@ class QLearn {
     /** Method for printing help to std::cout. */
     void printHelp() const;
 
+    /**
+     * Method for stepping the PhysicsEngine and processing each worm, depending
+     * on `run_physics`.
+     */
+    inline void advanceWorld();
+
     sf::RenderWindow* window;  // SFML window where the action happens
     sf::View view;  // View used in addition to window
 
@@ -141,6 +147,7 @@ class QLearn {
 
     std::string heading;  // Title heading of the created SFML window
 
+    bool run_physics = true;  // Should the physics iterate?
     bool follow_master = true;  // Should the view follow the master worm?
     float camera_offset = 0.f;  // X offset of camera in SFML window
 

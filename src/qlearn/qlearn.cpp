@@ -152,6 +152,10 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       master_worm->setRandomActs(!master_worm->getRandomAct());
       break;
 
+    case sf::Keyboard::P:
+      run_physics = !run_physics;
+      break;
+
     // TODO(Cookie): add possibility to change motor speed, motor torque,
     //               friction, simulation speed, and possibility to jump
     //               into the future with simulations
@@ -224,6 +228,13 @@ void QLearn::setViewCenter() {
   view.setCenter(x_view, y_view);
 }
 
+inline void QLearn::advanceWorld() {
+  if (run_physics) {
+    engine.step();
+    processWorms();
+  }
+}
+
 void QLearn::run() {
   printHelp();
 
@@ -232,13 +243,13 @@ void QLearn::run() {
     setViewCenter();
     window->setView(view);
 
-    engine.step();
     window->clear(clear_color);
+
+    // Advance forward in the world: step the PhysicsEngine and process worms
+    advanceWorld();
 
     // Check all events that might have happened
     eventHandler();
-    // Process each worm independently
-    processWorms();
     // Draw all components on window
     drawComponents();
 
