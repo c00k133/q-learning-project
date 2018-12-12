@@ -48,6 +48,10 @@ const std::string WormBrain::getName() const {
   return name;
 }
 
+bool WormBrain::getRandomAct() const {
+  return random_act;
+}
+
 void WormBrain::setRandomActs(bool choice) {
   random_act = choice;
 }
@@ -135,8 +139,4 @@ void WormBrain::process() {
   }
 
   ++count;
-
-  if (debug_frequency != 0 && count % debug_frequency == 0) {
-    std::cout << "-------------------------------" << std::endl << std::endl;
-  }
 }

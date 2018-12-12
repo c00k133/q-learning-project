@@ -103,6 +103,12 @@ class WormBrain {
     const std::string getName() const;
 
     /**
+     * Getter for random acting.
+     * @return false if acting random, true otherwise
+     */
+    bool getRandomAct() const;
+
+    /**
      * Setter for acting randomly.
      * If true the worm will not search for optimal target, but include some
      * randomness.

@@ -172,10 +172,13 @@ void SFMLDrawer::drawWormInformation(
   information.setCharacterSize(text_size);
   information.setColor(text_color);
 
+  // Set string indicator if worm is acting randomly or not
+  std::string random_act = worm->getRandomAct() ? "(R)" : "(O)";
+
   // String stream for string formatting
   std::stringstream worm_information;
 
-  worm_information << worm->getName() << " - ";
+  worm_information << worm->getName() << random_act << " - ";
   worm_information << "iterations: " << worm->getCount();
   worm_information << "\nx position: ";
   const float worm_x_position = worm->getBodyCoordinatesVector().x;

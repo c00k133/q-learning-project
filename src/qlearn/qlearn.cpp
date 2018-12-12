@@ -113,15 +113,13 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
-    case sf::Keyboard::Up:
-      view.zoom(1.f - QLEARN_CAMERA_ZOOM_INCREMENT);
-      zoom_value -= QLEARN_CAMERA_ZOOM_INCREMENT;
+    case sf::Keyboard::Up: case sf::Keyboard::Down: {
+      const float increment = 1.f + (key_press == sf::Keyboard::Up ?
+          -QLEARN_CAMERA_ZOOM_INCREMENT : QLEARN_CAMERA_ZOOM_INCREMENT);
+      view.zoom(increment);
+      zoom_value *= increment;
       break;
-
-    case sf::Keyboard::Down:
-      view.zoom(1.f + QLEARN_CAMERA_ZOOM_INCREMENT);
-      zoom_value += QLEARN_CAMERA_ZOOM_INCREMENT;
-      break;
+    }
 
     case sf::Keyboard::Space:
       camera_offset = 0.f;
@@ -138,16 +136,25 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       printHelp();
       break;
 
-    case sf::Keyboard::M:
-      master_worm_index = (master_worm_index + 1) % (unsigned int) worms.size();
+    case sf::Keyboard::M: case sf::Keyboard::N:
+      if (key_press == sf::Keyboard::M)
+        master_worm_index =
+            (master_worm_index + 1) % (unsigned int) worms.size();
+      else
+        master_worm_index = master_worm_index - 1 < 0 ?
+            (int) worms.size() - 1 : master_worm_index - 1;
+
       master_worm = worms[master_worm_index];
       break;
 
-    case sf::Keyboard::N:
-      master_worm_index = master_worm_index - 1 < 0 ?
-          (int) worms.size() - 1 : master_worm_index - 1;
-      master_worm = worms[master_worm_index];
+    case sf::Keyboard::R:
+      // Invert randomness of master worm
+      master_worm->setRandomActs(!master_worm->getRandomAct());
       break;
+
+    // TODO(Cookie): add possibility to change motor speed, motor torque,
+    //               friction, simulation speed, and possibility to jump
+    //               into the future with simulations
 
     default:
       break;
@@ -157,7 +164,7 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
 void QLearn::eventHandler() {
   sf::Event event;
   while (window->pollEvent(event)) {
-    switch (event.type) {  // TODO(Cookie): fill out with other key-presses
+    switch (event.type) {
       case sf::Event::Closed:
         window->close();
         break;
