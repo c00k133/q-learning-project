@@ -133,6 +133,7 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       // Reset master worm variables
       getMasterWorm()->getBody()->resetMaxMotorTorque();
       getMasterWorm()->getBody()->resetMotorSpeed();
+      getMasterWorm()->resetQLearningMoveReward();
       break;
 
     case sf::Keyboard::Escape:
@@ -188,6 +189,12 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
     case sf::Keyboard::C: case sf::Keyboard::V: {
       const float change = key_press == sf::Keyboard::C ? -0.1f : 0.1f;
       getMasterWorm()->getBody()->alterMotorSpeed(change);
+      break;
+    }
+
+    case sf::Keyboard::W: case sf::Keyboard::E: {
+      const float change = key_press == sf::Keyboard::W ? 0.05f : -0.05f;
+      getMasterWorm()->alterQLearningMoveReward(change);
       break;
     }
 
