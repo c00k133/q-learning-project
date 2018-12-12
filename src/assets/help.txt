@@ -9,6 +9,10 @@ Physics:
     A           increase physics simulation speed
     S           decrease physics simulation speed
     Q           jump 1000 iterations into the "future"
+    Z           increase the maximum motor torque of the master worm by 1000
+    X           decrease the maximum motor torque of the master worm by 1000
+    C           increase the motor speed of the master worm by 0.1
+    V           decrease the motor speed of the master worm by 0.1
 
 General:
     M           change master worm to next in line

@@ -11,6 +11,10 @@
 
 #define WORMBODY_DEFAULT_BONE_COLOR sf::Color(255, 102, 102)
 #define WORMBODY_DEFAULT_OUTLINE_COLOR sf::Color::Black
+#define WORMBODY_DEFAULT_BONE_WIDTH 10.f
+#define WORMBODY_DEFAULT_BONE_LENGTH 2.f
+#define WORMBODY_DEFAULT_MAX_MOTOR_TORQUE 100000.f
+#define WORMBODY_DEFAULT_MOTOR_SPEED 0.5f
 
 
 class WormBody {
@@ -115,6 +119,29 @@ class WormBody {
     const std::tuple<float, float> getBoneDimensions() const;
 
     /**
+     * Method for changing the maximum motor torque for each joint.
+     * Has to stay within bounds of [1.f, 1000000.f].
+     * @param motor_torque_change change in maximum motor torque
+     */
+    void alterMaxMotorTorque(float motor_torque_change);
+
+    /**
+     * Method for resetting the maximum motor torque for each joint to the
+     * default.
+     */
+    void resetMaxMotorTorque();
+
+    /**
+     * Method for changing the motor speed for each joint.
+     * Has to stay within bounds of [0.01f, 100.f].
+     * @param motor_speed_change change in motor speed
+     */
+    void alterMotorSpeed(float motor_speed_change);
+
+    /** Method for resetting the motor speed of joint to the default value. */
+    void resetMotorSpeed();
+
+    /**
      * Method for creating all body parts of this WormBody object.
      * Includes the creation of all bones and connecting joints.
      * @param world world in which these body parts exist
@@ -184,9 +211,16 @@ class WormBody {
     // Outline color of all bones in this body
     sf::Color body_outline_color = WORMBODY_DEFAULT_OUTLINE_COLOR;
 
+    // Box2D maximum motor torque
+    float max_motor_torque = WORMBODY_DEFAULT_MAX_MOTOR_TORQUE;
+    // Box2D motor speed for each joint motor
+    float motor_speed = WORMBODY_DEFAULT_MOTOR_SPEED;
+
     /* Static const values common for all worm bodies. */
-    static constexpr float bone_width = 10.f;  // Width of each bone
-    static constexpr float bone_length = 2.f;  // Length of each bone
+    // Width of each bone
+    static constexpr float bone_width = WORMBODY_DEFAULT_BONE_WIDTH;
+    // Length of each bone
+    static constexpr float bone_length = WORMBODY_DEFAULT_BONE_LENGTH;
 
     /* Static const values for Box2D usage. */
     static constexpr float density = 1.f;  // Box2D density for each bone
@@ -195,10 +229,6 @@ class WormBody {
     static constexpr float linear_damping = 0.f;
     // Box2D angular damping for each joint motor
     static constexpr float angular_damping = 0.01f;
-    // Box2D motor speed for each joint motor
-    static constexpr float motor_speed = 0.5f;
-    // Box2D maximum motor torque
-    static constexpr float max_motor_torque = 200000.f;
     // Y offset for Box2D body definitions
     static constexpr float y_distance = 0.f;
     // Initial x position of Box2D body definitions

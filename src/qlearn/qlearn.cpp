@@ -119,11 +119,20 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
     }
 
     case sf::Keyboard::Space:
+      // Fix camera to original values
       camera_offset = 0.f;
       follow_master = true;
+
+      // Reset the zoom value of the view
       view.zoom(1.f / zoom_value);
       zoom_value = 1.f;
+
+      // Reset engine time step
       engine.resetTimeStep();
+
+      // Reset master worm variables
+      getMasterWorm()->getBody()->resetMaxMotorTorque();
+      getMasterWorm()->getBody()->resetMotorSpeed();
       break;
 
     case sf::Keyboard::Escape:
@@ -170,8 +179,17 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       break;
     }
 
-    // TODO(Cookie): add possibility to change motor speed, motor torque,
-    //               friction
+    case sf::Keyboard::Z: case sf::Keyboard::X: {
+      const float change = key_press == sf::Keyboard::Z ? 1000.f : -1000.f;
+      getMasterWorm()->getBody()->alterMaxMotorTorque(change);
+      break;
+    }
+
+    case sf::Keyboard::C: case sf::Keyboard::V: {
+      const float change = key_press == sf::Keyboard::C ? -0.1f : 0.1f;
+      getMasterWorm()->getBody()->alterMotorSpeed(change);
+      break;
+    }
 
     default:
       break;
