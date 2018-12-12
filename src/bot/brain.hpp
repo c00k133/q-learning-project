@@ -136,6 +136,18 @@ class WormBrain {
      * @param file_name name of output file, if none given one will be created
      */
     void save(std::string file_name = nullptr);
+    // TODO(Cookie): implement save feature
+
+    /**
+     * Method for altering the move reward of the companion QLearning object.
+     * @param move_reward_change change amount of q learning move reward
+     */
+    void alterQLearningMoveReward(float move_reward_change);
+
+    /**
+     * Method for resetting the move reward of the QLearning companion object.
+     */
+    void resetQLearningMoveReward();
 
  private:
     /**

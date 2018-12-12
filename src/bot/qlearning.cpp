@@ -166,3 +166,14 @@ void QLearning::updateMatrix(float reward, unsigned int next_action) {
 
   ++counter;
 }
+
+void QLearning::alterMoveReward(float move_reward_change) {
+  float change = move_reward - move_reward_change;
+  change = change < 0.f ? 0.f : change;
+  change = change > 10.f ? 10.f : change;
+  move_reward = change;
+}
+
+void QLearning::resetMoveReward() {
+  move_reward = QLEARNING_DEFAULT_MOVE_REWARD;
+}

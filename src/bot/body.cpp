@@ -77,6 +77,42 @@ sf::Color WormBody::getBodyOutlineColor() const {
   return body_outline_color;
 }
 
+void WormBody::alterMaxMotorTorque(float motor_torque_change) {
+  float change = max_motor_torque - motor_torque_change;
+  change = change < 1.f ? 1.f : change;
+  change = change > 1000000.f ? 1000000.f : change;
+  max_motor_torque = change;
+
+  const auto joint_amount = joints.size();
+  for (unsigned int i = 0; i < joint_amount; ++i) {
+    auto joint = (b2RevoluteJoint*) getJoint(i);
+    joint->SetMaxMotorTorque(max_motor_torque);
+  }
+}
+
+void WormBody::resetMaxMotorTorque() {
+  max_motor_torque = WORMBODY_DEFAULT_MAX_MOTOR_TORQUE;
+  alterMaxMotorTorque(0.f);
+}
+
+void WormBody::alterMotorSpeed(float motor_speed_change) {
+  float change = motor_speed - motor_speed_change;
+  change = change < 0.01f ? 0.01f : change;
+  change = change > 100.f ? 100.f : change;
+  motor_speed = change;
+
+  const auto joint_amount = joints.size();
+  for (unsigned int i = 0; i < joint_amount; ++i) {
+    auto joint = (b2RevoluteJoint*) getJoint(i);
+    joint->SetMotorSpeed(motor_speed);
+  }
+}
+
+void WormBody::resetMotorSpeed() {
+  motor_speed = WORMBODY_DEFAULT_MOTOR_SPEED;
+  alterMotorSpeed(motor_speed);
+}
+
 void WormBody::setJointAngle(unsigned int index, float angle) {
   float32 current_angle = getJointAngle(index);
 

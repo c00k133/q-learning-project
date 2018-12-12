@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#define QLEARNING_DEFAULT_MOVE_REWARD 0.1f
+
 
 /**
  * Q learning class.
@@ -98,6 +100,16 @@ class QLearning {
     /** Method for printing the whole q-matrix. */
     void printMatrix() const;
 
+    /**
+     * Method for altering the move reward of this QLearning object.
+     * Has to stay within range of [0.f, 10.f].
+     * @param move_reward_change change of move reward
+     */
+    void alterMoveReward(float move_reward_change);
+
+    /** Method for resetting the move reward to default value. */
+    void resetMoveReward();
+
  private:
     /**
      * Get bounded values out of the Q-matrix.
@@ -146,7 +158,7 @@ class QLearning {
     unsigned int state = 0;  // Current state of this Q-algorithm
     unsigned int future_state = 0;  // Next state to take in future iteration
 
-    float move_reward = 0.1f;  // Reward for moving, default to 0.1f
+    float move_reward = QLEARNING_DEFAULT_MOVE_REWARD;  // Reward for moving
     double gamma;  // Gamma value used in Q calculation, range 0.0 - 1.0
     double alpha;  // Alpha value used in Q calculation, range 0.0 -1.0;
 

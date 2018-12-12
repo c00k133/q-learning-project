@@ -65,6 +65,14 @@ void WormBrain::setBodyOutlineColor(sf::Color outline_color) {
   body->setBodyOutlineColor(outline_color);
 }
 
+void WormBrain::alterQLearningMoveReward(float move_reward_change) {
+  qLearning->alterMoveReward(move_reward_change);
+}
+
+void WormBrain::resetQLearningMoveReward() {
+  qLearning->resetMoveReward();
+}
+
 const b2Vec2 WormBrain::getBodyCoordinatesVector() const {
   return body->getCoordinatesVector();
 }
@@ -76,6 +84,7 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
 const std::shared_ptr<WormBody> WormBrain::getBody() const {
   return body;
 }
+
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   // 0 == take no action

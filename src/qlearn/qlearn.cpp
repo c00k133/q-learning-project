@@ -110,8 +110,8 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
-    case sf::Keyboard::Up: case sf::Keyboard::Down: {
-      const float increment = 1.f + (key_press == sf::Keyboard::Up ?
+    case sf::Keyboard::Add: case sf::Keyboard::Subtract: {
+      const float increment = 1.f + (key_press == sf::Keyboard::Add ?
           -QLEARN_CAMERA_ZOOM_INCREMENT : QLEARN_CAMERA_ZOOM_INCREMENT);
       view.zoom(increment);
       zoom_value *= increment;
@@ -119,10 +119,21 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
     }
 
     case sf::Keyboard::Space:
+      // Fix camera to original values
       camera_offset = 0.f;
       follow_master = true;
+
+      // Reset the zoom value of the view
       view.zoom(1.f / zoom_value);
       zoom_value = 1.f;
+
+      // Reset engine time step
+      engine.resetTimeStep();
+
+      // Reset master worm variables
+      getMasterWorm()->getBody()->resetMaxMotorTorque();
+      getMasterWorm()->getBody()->resetMotorSpeed();
+      getMasterWorm()->resetQLearningMoveReward();
       break;
 
     case sf::Keyboard::Escape:
@@ -153,9 +164,39 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       run_physics = !run_physics;
       break;
 
-    // TODO(Cookie): add possibility to change motor speed, motor torque,
-    //               friction, simulation speed, and possibility to jump
-    //               into the future with simulations
+    case sf::Keyboard::A: case sf::Keyboard::S: {
+      const float32 change = key_press == sf::Keyboard::A ? -1.f : 1.f;
+      engine.alterTimeStep(change);
+      break;
+    }
+
+    case sf::Keyboard::Q: {
+      const bool original_run_physics = run_physics;
+      run_physics = true;
+      for (unsigned int i = 0; i < 1000; ++i) {
+        advanceWorld();
+      }
+      run_physics = original_run_physics;
+      break;
+    }
+
+    case sf::Keyboard::Z: case sf::Keyboard::X: {
+      const float change = key_press == sf::Keyboard::Z ? 1000.f : -1000.f;
+      getMasterWorm()->getBody()->alterMaxMotorTorque(change);
+      break;
+    }
+
+    case sf::Keyboard::C: case sf::Keyboard::V: {
+      const float change = key_press == sf::Keyboard::C ? -0.1f : 0.1f;
+      getMasterWorm()->getBody()->alterMotorSpeed(change);
+      break;
+    }
+
+    case sf::Keyboard::W: case sf::Keyboard::E: {
+      const float change = key_press == sf::Keyboard::W ? 0.05f : -0.05f;
+      getMasterWorm()->alterQLearningMoveReward(change);
+      break;
+    }
 
     default:
       break;
