@@ -17,7 +17,7 @@ void SFMLDrawer::drawGround(
         const b2Body& ground_body,
         float ground_x_dimension,
         float ground_y_dimension,
-        sf::Color color) {
+        sf::Color color) const {
   // Get and scale ground dimensions
   const float ground_width = ground_x_dimension * scale;
   const float ground_height = (ground_y_dimension + 10) * scale;
@@ -54,13 +54,13 @@ void SFMLDrawer::drawGround(
 void SFMLDrawer::drawGround(
         const b2Body& ground_body,
         b2Vec2 ground_dimensions,
-        sf::Color color) {
+        sf::Color color) const {
   // Explode b2Vec2 `ground_dimensions`
   drawGround(
           ground_body, ground_dimensions.x, ground_dimensions.y, color);
 }
 
-void SFMLDrawer::drawWorm(const WormBrain& worm) {
+void SFMLDrawer::drawWorm(const WormBrain& worm) const {
   // Get WormBody object out of `worm`
   const std::shared_ptr<WormBody> worm_body = worm.getBody();
 
@@ -141,7 +141,7 @@ void SFMLDrawer::drawTicks(
         float ground_width,
         unsigned int separation,
         unsigned int text_size,
-        float tick_y_position) {
+        float tick_y_position) const {
   // Styling of ticks
   sf::Text ticks;
   ticks.setFont(font);
@@ -163,7 +163,9 @@ void SFMLDrawer::drawTicks(
 }
 
 void SFMLDrawer::drawWormInformation(
-    const WormBrain& worm, sf::Vector2f position, unsigned int text_size) {
+    const WormBrain& worm,
+    sf::Vector2f position,
+    unsigned int text_size) const {
   sf::Text information;
   information.setFont(font);
   information.setCharacterSize(text_size);

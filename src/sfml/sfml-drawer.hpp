@@ -46,7 +46,7 @@ class SFMLDrawer {
     void drawGround(const b2Body& ground_body,
                     float ground_x_dimension,
                     float ground_y_dimension,
-                    sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+                    sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR) const;
 
     /**
      * Draw input ground onto `window`, dimensions as b2Vec2.
@@ -58,13 +58,13 @@ class SFMLDrawer {
     void drawGround(
             const b2Body& ground_body,
             b2Vec2 ground_dimensions,
-            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR) const;
 
     /**
      * Draw one worm at a time.
      * @param worm input worm to be drawn
      */
-    void drawWorm(const WormBrain& worm);
+    void drawWorm(const WormBrain& worm) const;
 
     /**
      * Draw ground ticks for distance measurement.
@@ -78,7 +78,7 @@ class SFMLDrawer {
             float ground_width,
             unsigned int separation = SFML_DRAWER_DEFAULT_SEPARATION,
             unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE,
-            float tick_y_position = SFML_DRAWER_DEFAULT_TICK_Y_POSITION);
+            float tick_y_position = SFML_DRAWER_DEFAULT_TICK_Y_POSITION) const;
 
     /**
      * Draw information about a specific worm onto the SFML window.
@@ -88,7 +88,7 @@ class SFMLDrawer {
     void drawWormInformation(
         const WormBrain& worm,
         sf::Vector2f position,
-        unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE);
+        unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE) const;
 
  private:
     // TODO(Cookie): move this to a utility library
