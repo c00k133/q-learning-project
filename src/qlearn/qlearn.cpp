@@ -110,8 +110,8 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
-    case sf::Keyboard::Up: case sf::Keyboard::Down: {
-      const float increment = 1.f + (key_press == sf::Keyboard::Up ?
+    case sf::Keyboard::Add: case sf::Keyboard::Subtract: {
+      const float increment = 1.f + (key_press == sf::Keyboard::Add ?
           -QLEARN_CAMERA_ZOOM_INCREMENT : QLEARN_CAMERA_ZOOM_INCREMENT);
       view.zoom(increment);
       zoom_value *= increment;
@@ -123,6 +123,7 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       follow_master = true;
       view.zoom(1.f / zoom_value);
       zoom_value = 1.f;
+      engine.resetTimeStep();
       break;
 
     case sf::Keyboard::Escape:
@@ -153,9 +154,24 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       run_physics = !run_physics;
       break;
 
+    case sf::Keyboard::A: case sf::Keyboard::S: {
+      const float32 change = key_press == sf::Keyboard::A ? -1.f : 1.f;
+      engine.alterTimeStep(change);
+      break;
+    }
+
+    case sf::Keyboard::Q: {
+      const bool original_run_physics = run_physics;
+      run_physics = true;
+      for (unsigned int i = 0; i < 1000; ++i) {
+        advanceWorld();
+      }
+      run_physics = original_run_physics;
+      break;
+    }
+
     // TODO(Cookie): add possibility to change motor speed, motor torque,
-    //               friction, simulation speed, and possibility to jump
-    //               into the future with simulations
+    //               friction
 
     default:
       break;

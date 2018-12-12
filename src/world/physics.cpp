@@ -3,7 +3,7 @@
 
 
 PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
-  time_step = 1.0f / in_time_step;
+  time_step = in_time_step;
 
   // Define the gravity vector
   b2Vec2 gravity = b2Vec2(0.0f, gravitational_force);
@@ -35,6 +35,17 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
   ground_body->CreateFixture(&ground_fixture_def);
 }
 
+void PhysicsEngine::alterTimeStep(float32 time_step_change) {
+  float32 change = time_step + time_step_change;
+  change = change < 1.f ? 1.f : change;
+  change = change > 1000.f ? 1000.f : change;
+  time_step = change;
+}
+
+void PhysicsEngine::resetTimeStep() {
+  time_step = PHYSICS_ENGINE_DEFAULT_TIME_STEP;
+}
+
 b2World& PhysicsEngine::getWorld() const {
   return *world;
 }
@@ -48,5 +59,5 @@ const b2Vec2 PhysicsEngine::getGroundDimensions() const {
 }
 
 void PhysicsEngine::step() {
-  world->Step(time_step, velocity_iterations, position_iterations);
+  world->Step(1.f / time_step, velocity_iterations, position_iterations);
 }

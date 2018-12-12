@@ -1,9 +1,14 @@
 Camera:
     Right       focus off master worm and move right
     Left        focus off master worm and move left
-    Up          zoom closer to worm
-    Down        zoom farther from worm
-    Space       focus back to master worm and reset zoom
+    +           zoom closer to worm
+    -           zoom farther from worm
+    Space       focus back to master worm and reset all changes
+
+Physics:
+    A           increase physics simulation speed
+    S           decrease physics simulation speed
+    Q           jump 1000 iterations into the "future"
 
 General:
     M           change master worm to next in line
@@ -11,5 +16,7 @@ General:
     R           toggle the randomness of current master worm (this is indicated with "(R)"
                 by the name if the worm is acting randomly, "(O)" when being optimal)
     P           toggle world iterations
+
+    H           print this help message to the terminal
 
     Escape      exit window and close program

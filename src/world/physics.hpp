@@ -5,6 +5,9 @@
 
 #include "Box2D/Box2D.h"
 
+#define PHYSICS_ENGINE_DEFAULT_WORLD_POSITION_X 10.f
+#define PHYSICS_ENGINE_DEFAULT_TIME_STEP 60.f
+
 
 class PhysicsEngine {
  public:
@@ -13,7 +16,19 @@ class PhysicsEngine {
      * @param world_pos x position of the ground
      * @param time_step time step size used in world simulation
      */
-    explicit PhysicsEngine(float world_pos = 10.f, float32 time_step = 60.f);
+    explicit PhysicsEngine(
+        float world_pos = PHYSICS_ENGINE_DEFAULT_WORLD_POSITION_X,
+        float32 time_step = PHYSICS_ENGINE_DEFAULT_TIME_STEP);
+
+    /**
+     * Alters the time step of this engine by the input amount.
+     * Bounds are checked, the final time step should be within [1.f, 1000.f]
+     * @param time_step_change change of time step
+     */
+    void alterTimeStep(float32 time_step_change);
+
+    /** Method for resetting the time step back to default value. */
+    void resetTimeStep();
 
     /**
      * Getter for the Box2D world.
