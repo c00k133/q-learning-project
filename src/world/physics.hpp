@@ -25,7 +25,7 @@ class PhysicsEngine {
      * Getter for the Box2D world.
      * @return pointer to world
      */
-    b2World* getWorld() const;
+    b2World& getWorld() const;
     /**
      * Getter for the Box2D ground.
      * @return pointer to the ground

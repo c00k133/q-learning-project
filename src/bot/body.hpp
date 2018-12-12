@@ -23,7 +23,7 @@ class WormBody {
      * @param world the world in which this body exists
      * @param bone_amount amount of bones in this worm, minimum 1, default 3
      */
-    explicit WormBody(b2World* world, unsigned int bone_amount = 3);
+    explicit WormBody(b2World& world, unsigned int bone_amount = 3);
 
     /**
      * Getter for amount of bones in this WormBody.
@@ -115,7 +115,7 @@ class WormBody {
      * Includes the creation of all bones and connecting joints.
      * @param world world in which these body parts exist
      */
-    void createBodyParts(b2World* world);
+    void createBodyParts(b2World& world);
 
  private:
     /**

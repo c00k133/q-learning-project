@@ -22,22 +22,20 @@ WormBrain::WormBrain(
 }
 
 WormBrain::WormBrain(
-        b2World *world,
+        b2World& world,
         int precision,
         unsigned int bone_amount,
         float max_error,
         std::string name) {
   init(precision, max_error, name);
 
-  body = new WormBody(world, bone_amount);
+  body = std::shared_ptr<WormBody>(new WormBody(world, bone_amount));
   auto joint_amount = body->getJointAmount();
   auto states = (unsigned int) pow(precision, joint_amount);
-  qLearning = new QLearning(states, 1 + joint_amount * 2);
+  qLearning = std::unique_ptr<QLearning>(new QLearning(states, 1 + joint_amount * 2));
 }
 
 WormBrain::~WormBrain() {
-  delete body;
-  delete qLearning;
 }
 
 int WormBrain::getCount() {
@@ -77,7 +75,7 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
   return body->getCoordinatesTuple();
 }
 
-const WormBody* WormBrain::getBody() const {
+const std::shared_ptr<WormBody> WormBrain::getBody() const {
   return body;
 }
 

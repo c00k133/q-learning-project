@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"

@@ -1,6 +1,8 @@
 #ifndef Q_LEARNING_BRAIN_HPP
 #define Q_LEARNING_BRAIN_HPP
 
+#include <memory>
+
 #include "body.hpp"
 #include "qlearning.hpp"
 #include "Box2D/Box2D.h"
@@ -49,7 +51,7 @@ class WormBrain {
      *                  to WORMBRAIN_DEFAULT_MAX_ERROR
      */
     WormBrain(
-            b2World* world,
+            b2World& world,
             int precision,
             unsigned int bone_amount = WORMBRAIN_DEFAULT_BONE_AMOUNT,
             float max_error = WORMBRAIN_DEFAULT_MAX_ERROR,
@@ -86,9 +88,9 @@ class WormBrain {
 
     /**
      * Getter for the WormBody.
-     * @return a const pointer to the WormBody.
+     * @return a const shared pointer to the WormBody.
      */
-    const WormBody* getBody() const;
+    const std::shared_ptr<WormBody> getBody() const;
 
     /**
      * Getter for private count variable.
@@ -178,8 +180,8 @@ class WormBrain {
     // When doing this the worm stops being lazy and moves properly
     std::tuple<unsigned int, float> saved_angle = std::make_tuple(0, 0.f);
 
-    WormBody* body;  // Controlled bot body object
-    QLearning* qLearning;  // Queried Q learning object
+    std::shared_ptr<WormBody> body;  // Controlled bot body object
+    std::unique_ptr<QLearning> qLearning;  // Queried Q learning object
 
     std::string name;  // Name of this worm
 

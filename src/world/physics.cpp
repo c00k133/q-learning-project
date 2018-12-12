@@ -39,8 +39,8 @@ PhysicsEngine::~PhysicsEngine() {
   delete world;
 }
 
-b2World* PhysicsEngine::getWorld() const {
-  return world;
+b2World& PhysicsEngine::getWorld() const {
+  return *world;
 }
 
 b2Body* PhysicsEngine::getGround() const {

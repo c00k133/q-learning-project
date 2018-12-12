@@ -21,7 +21,7 @@ WormBody::WormBody(unsigned int bone_amount) : bone_amount(bone_amount) {
 }
 
 WormBody::WormBody(
-        b2World* world,
+        b2World& world,
         unsigned int bone_amount) :
         bone_amount(bone_amount) {
   init(bone_amount);
@@ -197,7 +197,7 @@ b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
   return joint_def;
 }
 
-void WormBody::createBodyParts(b2World* world) {
+void WormBody::createBodyParts(b2World& world) {
   // Set initialization flag to true
   initialized = true;
 
@@ -208,17 +208,17 @@ void WormBody::createBodyParts(b2World* world) {
   b2PolygonShape body_shape = createBodyShape();
   b2FixtureDef body_fixture = createBodyFixtureDef(&body_shape);
 
-  b2Body* first_body = world->CreateBody(&body_def);
+  b2Body* first_body = world.CreateBody(&body_def);
   first_body->CreateFixture(&body_fixture);
 
   bones[0] = first_body;
   for (unsigned int i = 1; i < bone_amount; ++i) {
     body_def.position.Set(calculateDistance(i, 5), y_distance);
-    b2Body* body = world->CreateBody(&body_def);
+    b2Body* body = world.CreateBody(&body_def);
     body->CreateFixture(&body_fixture);
     bones[i] = body;
 
     b2RevoluteJointDef joint_def = createJoint(i);
-    joints[i - 1] = (b2RevoluteJoint*) world->CreateJoint(&joint_def);
+    joints[i - 1] = (b2RevoluteJoint*) world.CreateJoint(&joint_def);
   }
 }

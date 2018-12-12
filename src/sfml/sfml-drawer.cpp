@@ -64,7 +64,7 @@ void SFMLDrawer::drawGround(
 
  void SFMLDrawer::drawWorm(WormBrain* worm) {
   // Get WormBody object out of `worm`
-  const WormBody* worm_body = worm->getBody();
+  const std::shared_ptr<WormBody> worm_body = worm->getBody();
 
   // Get shape of bones from `worm`, used in loop below
   std::tuple<float, float> bone_dimensions = worm_body->getBoneDimensions();
