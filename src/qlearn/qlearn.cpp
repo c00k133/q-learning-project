@@ -3,12 +3,11 @@
 
 void QLearn::init() {
   sf::VideoMode video_mode(window_width, window_height);
-  window = new sf::RenderWindow(
-      video_mode, heading);
+  window = std::make_shared<sf::RenderWindow>(video_mode, heading);
   window->setFramerateLimit(framerate_limit);
 
   // Set companion object
-  drawer = new SFMLDrawer(window);
+  drawer = std::unique_ptr<SFMLDrawer>(new SFMLDrawer(window));
   drawer->setScale(scale);
 
   // Set master worm, used for centering camera.
@@ -54,9 +53,6 @@ QLearn::~QLearn() {
   for (auto worm : worms) {
     delete worm;
   }
-
-  delete drawer;
-  delete window;
 }
 
 inline WormBrain* QLearn::createWormBrain(

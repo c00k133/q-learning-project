@@ -8,6 +8,9 @@
 
 #include "Box2D/Box2D.h"
 
+#define WORMBODY_DEFAULT_BONE_COLOR sf::Color(255, 102, 102)
+#define WORMBODY_DEFAULT_OUTLINE_COLOR sf::Color::Black
+
 
 class WormBody {
  public:
@@ -176,9 +179,9 @@ class WormBody {
     unsigned int bone_amount;
 
     // Color of all bones in this body
-    sf::Color body_color = sf::Color(255, 102, 102);
+    sf::Color body_color = WORMBODY_DEFAULT_BONE_COLOR;
     // Outline color of all bones in this body
-    sf::Color body_outline_color = sf::Color::Black;
+    sf::Color body_outline_color = WORMBODY_DEFAULT_OUTLINE_COLOR;
 
     /* Static const values common for all worm bodies. */
     static constexpr float bone_width = 10.f;  // Width of each bone

@@ -23,7 +23,10 @@ public:
      * Constructor for SFMLDrawer.
      * Draws chosen methods on input window.
      */
-    explicit SFMLDrawer(sf::RenderWindow *window);
+    //explicit SFMLDrawer(sf::RenderWindow *window);
+    explicit SFMLDrawer(std::shared_ptr<sf::RenderWindow> window);
+
+    ~SFMLDrawer() = default;
 
     /**
      * Setter for scale used in scaling drawings on `window`.
@@ -104,7 +107,8 @@ private:
     sf::Font font;
 
     // Window onto which everything is drawn
-    sf::RenderWindow *window;
+    //sf::RenderWindow *window;
+    std::shared_ptr<sf::RenderWindow> window;
     // Scaling of objects on window
     float scale = 1.f;
 

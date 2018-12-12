@@ -1,6 +1,8 @@
 #ifndef Q_LEARNING_Q_LEARN
 #define Q_LEARNING_Q_LEARN
 
+#include <memory>
+
 #include "sfml-drawer.hpp"
 #include "physics.hpp"
 #include "brain.hpp"
@@ -141,10 +143,11 @@ class QLearn {
      */
     inline void advanceWorld();
 
-    sf::RenderWindow* window;  // SFML window where the action happens
+    // SFML window where the action happens
+    std::shared_ptr<sf::RenderWindow> window;
     sf::View view;  // View used in addition to window
 
-    SFMLDrawer* drawer;  // Companion SFMLDrawer object
+    std::unique_ptr<SFMLDrawer> drawer;  // Companion SFMLDrawer object
     PhysicsEngine engine;  // The physics engine for this specific instance
 
     int master_worm_index = 0;  // Index of master worm in `worms`

@@ -4,7 +4,8 @@
 #include "body-exceptions.hpp"
 
 
-SFMLDrawer::SFMLDrawer(sf::RenderWindow* window) : window(window) {
+SFMLDrawer::SFMLDrawer(std::shared_ptr<sf::RenderWindow> _window) {
+  window = std::move(_window);
   font = getFont();
 }
 
