@@ -90,7 +90,6 @@ void WormBody::setJointAngle(unsigned int index, float angle) {
     motor_enabled = false;
   } else {
     // We have to decide which way the joint motor will rotate
-    //std::cout << "curr a: " << current_angle << " | " << "t a: " << angle << std::endl;
     bool larger = current_angle > angle;
     lower = larger ? angle : current_angle;
     upper = larger ? current_angle : angle;
@@ -170,7 +169,7 @@ b2FixtureDef WormBody::createBodyFixtureDef(const b2PolygonShape* shape) const {
 }
 
 inline int WormBody::calculateDistance(unsigned int index, int offset) const {
-  return ((int) bone_width) * index - offset;
+  return static_cast<int>(bone_width) * index - offset;
 }
 
 b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
@@ -191,8 +190,7 @@ b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
   joint_def.Initialize(
       bones[index - 1],
       bones[index],
-      b2Vec2(calculateDistance(index - 1), 0)
-  );
+      b2Vec2(calculateDistance(index - 1), 0));
 
   return joint_def;
 }

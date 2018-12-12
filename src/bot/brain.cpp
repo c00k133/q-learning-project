@@ -29,13 +29,14 @@ WormBrain::WormBrain(
         std::string name) {
   init(precision, max_error, name);
 
-  body = std::shared_ptr<WormBody>(new WormBody(world, bone_amount));
+  body = std::make_shared<WormBody>(world, bone_amount);
   auto joint_amount = body->getJointAmount();
   auto states = (unsigned int) pow(precision, joint_amount);
-  qLearning = std::unique_ptr<QLearning>(new QLearning(states, 1 + joint_amount * 2));
+  qLearning =
+      std::unique_ptr<QLearning>(new QLearning(states, 1 + joint_amount * 2));
 }
 
-int WormBrain::getCount() {
+int WormBrain::getCount() const {
   return count;
 }
 

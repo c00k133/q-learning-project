@@ -2,6 +2,8 @@
 #define Q_LEARNING_BRAIN_HPP
 
 #include <memory>
+#include <tuple>
+#include <string>
 
 #include "body.hpp"
 #include "qlearning.hpp"
@@ -89,7 +91,7 @@ class WormBrain {
      * Getter for private count variable.
      * @return count value
      */
-    int getCount();
+    int getCount() const;
 
     /**
      * Getter for private name.

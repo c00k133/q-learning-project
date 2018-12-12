@@ -22,10 +22,7 @@ int TestUtils::setBoundsAndGetInt(int lower, int upper) {
 }
 
 std::vector<std::vector<double>> TestUtils::create2DVector(
-        unsigned long columns,
-        unsigned long rows,
-        double values
-) {
+        int16 columns, int16 rows, double values) {
   return std::vector<std::vector<double>>(
           columns, std::vector<double>(rows, values));
 }

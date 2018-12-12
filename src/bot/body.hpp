@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <string>
 #include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"

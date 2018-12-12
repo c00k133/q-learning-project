@@ -58,7 +58,8 @@ inline WormBrain* QLearn::createWormBrain(
           name);
 }
 
-WormBrain* QLearn::createWormType(QLearnUtils::WormType& worm_type) const {
+WormBrain* QLearn::createWormType(
+    const QLearnUtils::WormType& worm_type) const {
   WormBrain* worm = createWormBrain(
           worm_type.precision, worm_type.bone_amount, worm_type.name);
   worm->setBodyColor(worm_type.color);
@@ -138,7 +139,7 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
             (master_worm_index + 1) % (unsigned int) worms.size();
       else
         master_worm_index = master_worm_index - 1 < 0 ?
-            (int) worms.size() - 1 : master_worm_index - 1;
+            static_cast<int>(worms.size()) - 1 : master_worm_index - 1;
       break;
 
     case sf::Keyboard::R: {

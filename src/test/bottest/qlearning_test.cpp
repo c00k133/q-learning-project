@@ -6,8 +6,8 @@
 
 
 TEST(qlearning_generic_test, matrix_test) {
-  const unsigned long columns = 5;
-  const unsigned long rows = 5;
+  const int16 columns = 5;
+  const int16 rows = 5;
   QLearning qLearning = QLearning(columns, rows, 0.5);
 
   for (unsigned int i = 0; i < columns; ++i) {

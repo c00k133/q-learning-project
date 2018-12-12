@@ -2,6 +2,8 @@
 #define Q_LEARNING_Q_LEARN
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "sfml-drawer.hpp"
 #include "physics.hpp"
@@ -28,7 +30,7 @@ namespace QLearnUtils {
         sf::Color color;
         std::string name;
     };
-}
+}  // namespace QLearnUtils
 
 
 class QLearn {
@@ -84,7 +86,7 @@ class QLearn {
      * @param worm_type the flavor fo the WormBrain
      * @return pointer to newly created WormBrain flavor
      */
-    WormBrain* createWormType(QLearnUtils::WormType& worm_type) const;
+    WormBrain* createWormType(const QLearnUtils::WormType& worm_type) const;
 
     /**
      * Wrapper method for extracting master worm from `worms` vector.

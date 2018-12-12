@@ -14,19 +14,17 @@ void SFMLDrawer::setScale(float new_scale) {
 }
 
 void SFMLDrawer::drawGround(
-        b2Body& ground_body,
+        const b2Body& ground_body,
         float ground_x_dimension,
         float ground_y_dimension,
         sf::Color color) {
-
   // Get and scale ground dimensions
-  float ground_width = ground_x_dimension * scale;
-  float ground_height = (ground_y_dimension + 10) * scale;
+  const float ground_width = ground_x_dimension * scale;
+  const float ground_height = (ground_y_dimension + 10) * scale;
   // FIXME(Cookie): localize calculations of ground dimensions
-  //float ground_height = ground_y_dimension * scale;
 
   // Get fixture list head
-  b2Fixture *fixture = ground_body.GetFixtureList();
+  const b2Fixture *fixture = ground_body.GetFixtureList();
 
   // Loop through list until list end
   while (fixture) {
@@ -54,16 +52,15 @@ void SFMLDrawer::drawGround(
 }
 
 void SFMLDrawer::drawGround(
-        b2Body& ground_body,
+        const b2Body& ground_body,
         b2Vec2 ground_dimensions,
         sf::Color color) {
-
   // Explode b2Vec2 `ground_dimensions`
   drawGround(
           ground_body, ground_dimensions.x, ground_dimensions.y, color);
 }
 
- void SFMLDrawer::drawWorm(WormBrain& worm) {
+void SFMLDrawer::drawWorm(const WormBrain& worm) {
   // Get WormBody object out of `worm`
   const std::shared_ptr<WormBody> worm_body = worm.getBody();
 
@@ -145,29 +142,28 @@ void SFMLDrawer::drawTicks(
         unsigned int separation,
         unsigned int text_size,
         float tick_y_position) {
+  // Styling of ticks
+  sf::Text ticks;
+  ticks.setFont(font);
+  ticks.setCharacterSize(text_size);
+  ticks.setColor(text_color);
 
-   // Styling of ticks
-   sf::Text ticks;
-   ticks.setFont(font);
-   ticks.setCharacterSize(text_size);
-   ticks.setColor(text_color);
-
-   // Draw tick numbers on ground at `separation` intervals
-   for (unsigned int i = 0; i < ground_width / separation; ++i) {
-     const int tick_number = i * separation;
-     // Draw negative tick marks
-     ticks.setString(std::to_string(-tick_number));
-     ticks.setPosition(sf::Vector2f(-tick_number * scale, tick_y_position));
-     window->draw(ticks);
-     // Draw positive tick marks
-     ticks.setString(std::to_string(tick_number));
-     ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
-     window->draw(ticks);
-   }
+  // Draw tick numbers on ground at `separation` intervals
+  for (unsigned int i = 0; i < ground_width / separation; ++i) {
+    const int tick_number = i * separation;
+    // Draw negative tick marks
+    ticks.setString(std::to_string(-tick_number));
+    ticks.setPosition(sf::Vector2f(-tick_number * scale, tick_y_position));
+    window->draw(ticks);
+    // Draw positive tick marks
+    ticks.setString(std::to_string(tick_number));
+    ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
+    window->draw(ticks);
+  }
 }
 
 void SFMLDrawer::drawWormInformation(
-    WormBrain& worm, sf::Vector2f position, unsigned int text_size) {
+    const WormBrain& worm, sf::Vector2f position, unsigned int text_size) {
   sf::Text information;
   information.setFont(font);
   information.setCharacterSize(text_size);

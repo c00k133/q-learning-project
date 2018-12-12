@@ -8,7 +8,6 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
   // Define the gravity vector
   b2Vec2 gravity = b2Vec2(0.0f, gravitational_force);
   // Construct a world object, which will hold and simulate the rigid bodies
-  //world = std::make_shared<b2World>(new b2World(gravity));
   world = std::make_shared<b2World>(gravity);
 
   // Define the ground body
