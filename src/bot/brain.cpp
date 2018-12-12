@@ -35,9 +35,6 @@ WormBrain::WormBrain(
   qLearning = std::unique_ptr<QLearning>(new QLearning(states, 1 + joint_amount * 2));
 }
 
-WormBrain::~WormBrain() {
-}
-
 int WormBrain::getCount() {
   return count;
 }

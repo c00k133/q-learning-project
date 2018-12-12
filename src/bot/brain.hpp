@@ -58,13 +58,6 @@ class WormBrain {
             std::string name = WORMBRAIN_DEFAULT_NAME);
 
     /**
-     * WormBrain destructor.
-     *
-     * Takes care of releasing body and q-learning allocated memory.
-     */
-    ~WormBrain();
-
-    /**
      * Updates the state of the whole worm based on actions.
      *
      * The process() method updates the state of the WormBrain, WormBody, and

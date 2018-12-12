@@ -13,7 +13,7 @@ void SFMLDrawer::setScale(float new_scale) {
 }
 
 void SFMLDrawer::drawGround(
-        b2Body* ground_body,
+        b2Body& ground_body,
         float ground_x_dimension,
         float ground_y_dimension,
         sf::Color color) {
@@ -25,7 +25,7 @@ void SFMLDrawer::drawGround(
   //float ground_height = ground_y_dimension * scale;
 
   // Get fixture list head
-  b2Fixture *fixture = ground_body->GetFixtureList();
+  b2Fixture *fixture = ground_body.GetFixtureList();
 
   // Loop through list until list end
   while (fixture) {
@@ -39,7 +39,7 @@ void SFMLDrawer::drawGround(
     //ground.setRotation(ground_body->GetAngle() * 180 / b2_pi);
 
     // Get, scale, and set ground position
-    const b2Vec2 ground_position = ground_body->GetPosition();
+    const b2Vec2 ground_position = ground_body.GetPosition();
     const float32 x_position = ground_position.x * scale;
     const float32 y_position = ground_position.y * scale;
     ground.setPosition(x_position, y_position);
@@ -53,7 +53,7 @@ void SFMLDrawer::drawGround(
 }
 
 void SFMLDrawer::drawGround(
-        b2Body *ground_body,
+        b2Body& ground_body,
         b2Vec2 ground_dimensions,
         sf::Color color) {
 

@@ -8,7 +8,8 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
   // Define the gravity vector
   b2Vec2 gravity = b2Vec2(0.0f, gravitational_force);
   // Construct a world object, which will hold and simulate the rigid bodies
-  world = new b2World(gravity);
+  //world = std::make_shared<b2World>(new b2World(gravity));
+  world = std::make_shared<b2World>(gravity);
 
   // Define the ground body
   b2BodyDef ground_body_def;
@@ -35,16 +36,12 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
   ground_body->CreateFixture(&ground_fixture_def);
 }
 
-PhysicsEngine::~PhysicsEngine() {
-  delete world;
-}
-
 b2World& PhysicsEngine::getWorld() const {
   return *world;
 }
 
-b2Body* PhysicsEngine::getGround() const {
-  return ground_body;
+b2Body& PhysicsEngine::getGround() const {
+  return *ground_body;
 }
 
 const b2Vec2 PhysicsEngine::getGroundDimensions() const {

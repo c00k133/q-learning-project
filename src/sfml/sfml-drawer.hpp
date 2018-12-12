@@ -39,7 +39,7 @@ public:
      * @param color color for ground, defaults to
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
-    void drawGround(b2Body *ground_body,
+    void drawGround(b2Body& ground_body,
                     float ground_x_dimension,
                     float ground_y_dimension,
                     sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
@@ -52,7 +52,7 @@ public:
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
     void drawGround(
-            b2Body *ground_body,
+            b2Body& ground_body,
             b2Vec2 ground_dimensions,
             sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
 

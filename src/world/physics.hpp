@@ -1,6 +1,8 @@
 #ifndef Q_LEARNING_PHYSICS_HPP
 #define Q_LEARNING_PHYSICS_HPP
 
+#include <memory>
+
 #include "Box2D/Box2D.h"
 
 
@@ -14,14 +16,6 @@ class PhysicsEngine {
     explicit PhysicsEngine(float world_pos = 10.f, float32 time_step = 60.f);
 
     /**
-     * PhysicsEngine destructor.
-     * Takes care of deleting the world object.
-     *
-     * The ground object has a private destructor.
-     */
-    ~PhysicsEngine();
-
-    /**
      * Getter for the Box2D world.
      * @return pointer to world
      */
@@ -30,7 +24,7 @@ class PhysicsEngine {
      * Getter for the Box2D ground.
      * @return pointer to the ground
      */
-    b2Body* getGround() const;
+    b2Body& getGround() const;
 
     /**
      * Getter for the dimensions of the ground.
@@ -43,7 +37,7 @@ class PhysicsEngine {
 
  private:
     // Pointer to the simulated world
-    b2World* world;
+    std::shared_ptr<b2World> world;
     // Pointer to the ground body
     b2Body* ground_body;
 
