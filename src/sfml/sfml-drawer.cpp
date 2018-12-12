@@ -63,9 +63,9 @@ void SFMLDrawer::drawGround(
           ground_body, ground_dimensions.x, ground_dimensions.y, color);
 }
 
- void SFMLDrawer::drawWorm(WormBrain* worm) {
+ void SFMLDrawer::drawWorm(WormBrain& worm) {
   // Get WormBody object out of `worm`
-  const std::shared_ptr<WormBody> worm_body = worm->getBody();
+  const std::shared_ptr<WormBody> worm_body = worm.getBody();
 
   // Get shape of bones from `worm`, used in loop below
   std::tuple<float, float> bone_dimensions = worm_body->getBoneDimensions();
@@ -167,22 +167,22 @@ void SFMLDrawer::drawTicks(
 }
 
 void SFMLDrawer::drawWormInformation(
-    WormBrain *worm, sf::Vector2f position, unsigned int text_size) {
+    WormBrain& worm, sf::Vector2f position, unsigned int text_size) {
   sf::Text information;
   information.setFont(font);
   information.setCharacterSize(text_size);
   information.setColor(text_color);
 
   // Set string indicator if worm is acting randomly or not
-  std::string random_act = worm->getRandomAct() ? "(R)" : "(O)";
+  std::string random_act = worm.getRandomAct() ? "(R)" : "(O)";
 
   // String stream for string formatting
   std::stringstream worm_information;
 
-  worm_information << worm->getName() << random_act << " - ";
-  worm_information << "iterations: " << worm->getCount();
+  worm_information << worm.getName() << random_act << " - ";
+  worm_information << "iterations: " << worm.getCount();
   worm_information << "\nx position: ";
-  const float worm_x_position = worm->getBodyCoordinatesVector().x;
+  const float worm_x_position = worm.getBodyCoordinatesVector().x;
   worm_information << std::fixed << std::setprecision(2) << worm_x_position;
 
   information.setString(worm_information.str());

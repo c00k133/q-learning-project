@@ -11,7 +11,7 @@ void QLearn::init() {
   drawer->setScale(scale);
 
   // Set master worm, used for centering camera.
-  worms.push_back(createWormBrain(20, 4, "Master"));
+  worms.push_back(std::shared_ptr<WormBrain>(createWormBrain(20, 4, "Master")));
 
   view = sf::View(
       sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
@@ -48,13 +48,6 @@ QLearn::QLearn(unsigned int amount,
   insertToWorms(amount, worm_type);
 }
 
-QLearn::~QLearn() {
-  // Delete each worm
-  for (auto worm : worms) {
-    delete worm;
-  }
-}
-
 inline WormBrain* QLearn::createWormBrain(
         int precision, unsigned int bone_amount, std::string name) const {
   return new WormBrain(
@@ -72,7 +65,7 @@ WormBrain* QLearn::createWormType(QLearnUtils::WormType& worm_type) const {
   return worm;
 }
 
-inline WormBrain* QLearn::getMasterWorm() const {
+inline std::shared_ptr<WormBrain> QLearn::getMasterWorm() const {
   return worms[master_worm_index];
 }
 
@@ -82,7 +75,7 @@ void QLearn::insertToWorms(
   for (unsigned int i = 0; i < amount; ++i) {
     worm_type.name = original_name + std::to_string(i + 1);
     WormBrain* worm = createWormType(worm_type);
-    worms.push_back(worm);
+    worms.push_back(std::shared_ptr<WormBrain>(worm));
   }
 }
 
@@ -201,7 +194,7 @@ void QLearn::processWorms() {
 void QLearn::drawComponents() {
   // Drawing of worms happen sequentially, drawing in parallel breaks SFML
   for (auto worm : worms) {
-    drawer->drawWorm(worm);
+    drawer->drawWorm(*worm);
   }
 
   // Draw the ground based on PhysicsEngine
@@ -218,7 +211,7 @@ void QLearn::drawComponents() {
   const float y_dimension = view.getSize().y / 2 - 53 * scale;
   auto information_position =
       view.getCenter() - sf::Vector2f(x_dimension, y_dimension);
-  drawer->drawWormInformation(getMasterWorm(), information_position);
+  drawer->drawWormInformation(*getMasterWorm(), information_position);
 }
 
 void QLearn::setViewCenter() {

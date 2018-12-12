@@ -61,12 +61,6 @@ class QLearn {
         unsigned int window_width = QLEARN_DEFAULT_WINDOW_WIDTH,
         unsigned int window_height = QLEARN_DEFAULT_WINDOW_HEIGHT);
 
-    /**
-     * QLearn destructor, takes care of deleting all allocate memory.
-     * E.g. all WormBrain objects.
-     */
-    ~QLearn();
-
     /** Run and loop the whole program. */
     void run();
 
@@ -96,7 +90,7 @@ class QLearn {
      * Wrapper method for extracting master worm from `worms` vector.
      * @return pointer to master worm
      */
-    inline WormBrain* getMasterWorm() const;
+    inline std::shared_ptr<WormBrain> getMasterWorm() const;
 
     /**
      * Insert a certain amount of WormBrains with `worm_type` flavor to vector
@@ -151,7 +145,7 @@ class QLearn {
     PhysicsEngine engine;  // The physics engine for this specific instance
 
     int master_worm_index = 0;  // Index of master worm in `worms`
-    std::vector<WormBrain*> worms;  // All saved worm instances
+    std::vector<std::shared_ptr<WormBrain>> worms;  // All saved worm instances
 
     std::string heading;  // Title heading of the created SFML window
 

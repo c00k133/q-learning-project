@@ -63,7 +63,7 @@ public:
      * Draw one worm at a time.
      * @param worm input worm to be drawn
      */
-    void drawWorm(WormBrain* worm);
+    void drawWorm(WormBrain& worm);
 
     /**
      * Draw ground ticks for distance measurement.
@@ -85,7 +85,7 @@ public:
      * @param position position of information as a sf::Vector2f
      */
     void drawWormInformation(
-        WormBrain* worm,
+        WormBrain& worm,
         sf::Vector2f position,
         unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE);
 
