@@ -235,7 +235,7 @@ void QLearn::processWorms() {
 
 void QLearn::drawComponents() {
   // Drawing of worms happen sequentially, drawing in parallel breaks SFML
-  for (auto worm : worms) {
+  for (const auto& worm : worms) {
     drawer->drawWorm(*worm);
   }
 

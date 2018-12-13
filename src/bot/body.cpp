@@ -204,8 +204,9 @@ b2FixtureDef WormBody::createBodyFixtureDef(const b2PolygonShape* shape) const {
   return body_fixture;
 }
 
-inline int WormBody::calculateDistance(unsigned int index, int offset) const {
-  return static_cast<int>(bone_width) * index - offset;
+inline float32 WormBody::calculateDistance(
+    unsigned int index, float offset) const {
+  return bone_width * index - offset;
 }
 
 b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
@@ -237,7 +238,7 @@ void WormBody::createBodyParts(b2World& world) {
 
   b2BodyDef body_def = createBodyDef();
   // Set initial position of bot body definition
-  body_def.position.Set(calculateDistance(0, 5), y_distance);
+  body_def.position.Set(calculateDistance(0, bone_width / 2.f), y_distance);
 
   b2PolygonShape body_shape = createBodyShape();
   b2FixtureDef body_fixture = createBodyFixtureDef(&body_shape);
@@ -247,7 +248,7 @@ void WormBody::createBodyParts(b2World& world) {
 
   bones[0] = first_body;
   for (unsigned int i = 1; i < bone_amount; ++i) {
-    body_def.position.Set(calculateDistance(i, 5), y_distance);
+    body_def.position.Set(calculateDistance(i, bone_width / 2.f), y_distance);
     b2Body* body = world.CreateBody(&body_def);
     body->CreateFixture(&body_fixture);
     bones[i] = body;

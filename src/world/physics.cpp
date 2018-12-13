@@ -28,8 +28,8 @@ PhysicsEngine::PhysicsEngine(float world_pos, float32 in_time_step) {
   b2FixtureDef ground_fixture_def;
   ground_fixture_def.density = 1.f;
   ground_fixture_def.shape = &ground_box;
-  ground_fixture_def.filter.categoryBits = 2;
-  ground_fixture_def.filter.maskBits = 1;
+  ground_fixture_def.filter.categoryBits = 0x2;
+  ground_fixture_def.filter.maskBits = 0x1;
 
   // Add the ground fixture to the ground body
   ground_body->CreateFixture(&ground_fixture_def);
