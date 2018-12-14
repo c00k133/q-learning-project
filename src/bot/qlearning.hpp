@@ -97,9 +97,6 @@ class QLearning {
      */
     void updateMatrix(float reward, unsigned int next_action);
 
-    /** Method for printing the whole q-matrix. */
-    void printMatrix() const;
-
     /**
      * Method for altering the move reward of this QLearning object.
      * Has to stay within range of [0.f, 10.f].
@@ -142,6 +139,27 @@ class QLearning {
      */
     bool print() const;
 
+    /**
+     * Helper method for correctly calculating value with which one can index
+     * the Q matrix.
+     * Throws an QLearningException if row is larger than states and column is
+     * larger than actions, which would be out of bounds.
+     * @param row which row is indexed in the matrix
+     * @param column which column is indexed in the matrix
+     * @return an unsigned int representing the correct indexing value for the
+     *         Q matrix
+     */
+    inline unsigned int calculateIndex(
+            unsigned int row, unsigned int column) const;
+
+    /**
+     * Helper method for correctly indexing the Q matrix.
+     * @param row which row is indexed in the matrix
+     * @param column which column is indexed in the matrix
+     * @return the value in the matrix chosen by `row` and `column`
+     */
+    inline double indexMatrix(unsigned int row, unsigned int column) const;
+
     // Randomize initial current best for varying learning results
     bool random_best_action = true;
 
@@ -153,7 +171,7 @@ class QLearning {
 
     unsigned int states;  // Number of states; number of matrix columns
     unsigned int actions;  // Number of actions; number of matrix rows
-    std::vector<std::vector<double>> q_matrix;  // Storage for Q matrix
+    std::vector<double> q_matrix;  // Storage for Q matrix
 
     unsigned int state = 0;  // Current state of this Q-algorithm
     unsigned int future_state = 0;  // Next state to take in future iteration
