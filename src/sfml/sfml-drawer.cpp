@@ -171,7 +171,7 @@ void SFMLDrawer::drawWormInformation(
   information.setFont(font);
   information.setCharacterSize(text_size);
   information.setColor(text_color);
-  information.setOutlineThickness(2.f);
+  information.setOutlineThickness(1.f);
   information.setOutlineColor(sf::Color::Black);
 
   // Set string indicator if worm is acting randomly or not

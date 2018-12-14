@@ -15,9 +15,6 @@ void QLearn::init() {
 
   view = sf::View(
       sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
-
-//  view_text = sf::View(
-//      sf::Vector2f(0,0), sf::Vector2f(window_width / 20, window_height / 20));
 }
 
 QLearn::QLearn(

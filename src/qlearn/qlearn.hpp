@@ -142,7 +142,6 @@ class QLearn {
     // SFML window where the action happens
     std::shared_ptr<sf::RenderWindow> window;
     sf::View view;  // View used in addition to window
-    //sf::View view_text; // View used for the "Iterations:" and "distance x:" text
 
     std::unique_ptr<SFMLDrawer> drawer;  // Companion SFMLDrawer object
     PhysicsEngine engine;  // The physics engine for this specific instance
