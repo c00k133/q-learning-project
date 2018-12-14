@@ -6,4 +6,4 @@ In simple terms the project consists of bots that try to teach themselves how to
 
 Please have a look at our documentation under `doc/` for more information, or jump straight to the implementation under `src/`.
 
-*The project utilizes CMake, so it should be multi-platform. However, it has only been extensively tested on computers running Ubuntu. *
+*The project utilizes CMake, so it should be multi-platform. However, it has only been extensively tested on computers running Ubuntu.*
