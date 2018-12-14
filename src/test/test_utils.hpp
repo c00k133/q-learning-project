@@ -13,9 +13,7 @@ class TestUtils {
     void setBounds(int lower, int upper);
     int setBoundsAndGetInt(int lower, int upper);
     std::vector<std::vector<double>> create2DVector(
-            unsigned long columns,
-            unsigned long rows,
-            double values = 0.0);
+            int16 columns, int16 rows, double values = 0.0);
     unsigned int getTestAmount() const;
 
  private:

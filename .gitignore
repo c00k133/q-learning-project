@@ -9,6 +9,9 @@ cmake*/
 # Ignore environmental configs from MacOS
 .DS_Store
 
+# Ignore swap files from Vim
+*.swp
+
 ## The following .gitignore is taken from the following link:
 #       https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
 

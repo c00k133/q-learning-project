@@ -26,7 +26,6 @@ ELSE()
 ENDIF(${CMAKE_COMPILER_IS_GNUCXX} AND ${COMPILER_VERSION} VERSION_GREATER 4.8.1)
 
 # Set common compiler and linker flags
-ADD_DEFINITIONS(-fopenmp)
 ADD_DEFINITIONS(-std=c++11)
 ADD_DEFINITIONS(-Wall)
 
@@ -53,6 +52,8 @@ SET(CMAKE_MODULE_PATH  "${PROJECT_SOURCE_DIR}/libs")
 FIND_PACKAGE(SFML REQUIRED system window graphics network audio)
 IF(SFML_FOUND)
     INCLUDE_DIRECTORIES(${SFML_INCLUDE_DIR})
+ELSE()
+    MESSAGE(FATAL_ERROR "SFML could not be found on this system, please install it.")
 ENDIF()
 
 # Set some directory variables

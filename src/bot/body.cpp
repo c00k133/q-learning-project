@@ -21,7 +21,7 @@ WormBody::WormBody(unsigned int bone_amount) : bone_amount(bone_amount) {
 }
 
 WormBody::WormBody(
-        b2World* world,
+        b2World& world,
         unsigned int bone_amount) :
         bone_amount(bone_amount) {
   init(bone_amount);
@@ -77,6 +77,42 @@ sf::Color WormBody::getBodyOutlineColor() const {
   return body_outline_color;
 }
 
+void WormBody::alterMaxMotorTorque(float motor_torque_change) {
+  float change = max_motor_torque - motor_torque_change;
+  change = change < 1.f ? 1.f : change;
+  change = change > 1000000.f ? 1000000.f : change;
+  max_motor_torque = change;
+
+  const auto joint_amount = joints.size();
+  for (unsigned int i = 0; i < joint_amount; ++i) {
+    auto joint = (b2RevoluteJoint*) getJoint(i);
+    joint->SetMaxMotorTorque(max_motor_torque);
+  }
+}
+
+void WormBody::resetMaxMotorTorque() {
+  max_motor_torque = WORMBODY_DEFAULT_MAX_MOTOR_TORQUE;
+  alterMaxMotorTorque(0.f);
+}
+
+void WormBody::alterMotorSpeed(float motor_speed_change) {
+  float change = motor_speed - motor_speed_change;
+  change = change < 0.01f ? 0.01f : change;
+  change = change > 100.f ? 100.f : change;
+  motor_speed = change;
+
+  const auto joint_amount = joints.size();
+  for (unsigned int i = 0; i < joint_amount; ++i) {
+    auto joint = (b2RevoluteJoint*) getJoint(i);
+    joint->SetMotorSpeed(motor_speed);
+  }
+}
+
+void WormBody::resetMotorSpeed() {
+  motor_speed = WORMBODY_DEFAULT_MOTOR_SPEED;
+  alterMotorSpeed(motor_speed);
+}
+
 void WormBody::setJointAngle(unsigned int index, float angle) {
   float32 current_angle = getJointAngle(index);
 
@@ -90,7 +126,6 @@ void WormBody::setJointAngle(unsigned int index, float angle) {
     motor_enabled = false;
   } else {
     // We have to decide which way the joint motor will rotate
-    //std::cout << "curr a: " << current_angle << " | " << "t a: " << angle << std::endl;
     bool larger = current_angle > angle;
     lower = larger ? angle : current_angle;
     upper = larger ? current_angle : angle;
@@ -169,8 +204,9 @@ b2FixtureDef WormBody::createBodyFixtureDef(const b2PolygonShape* shape) const {
   return body_fixture;
 }
 
-inline int WormBody::calculateDistance(unsigned int index, int offset) const {
-  return ((int) bone_width) * index - offset;
+inline float32 WormBody::calculateDistance(
+    unsigned int index, float offset) const {
+  return bone_width * index - offset;
 }
 
 b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
@@ -191,34 +227,33 @@ b2RevoluteJointDef WormBody::createJoint(unsigned int index) const {
   joint_def.Initialize(
       bones[index - 1],
       bones[index],
-      b2Vec2(calculateDistance(index - 1), 0)
-  );
+      b2Vec2(calculateDistance(index - 1), 0));
 
   return joint_def;
 }
 
-void WormBody::createBodyParts(b2World* world) {
+void WormBody::createBodyParts(b2World& world) {
   // Set initialization flag to true
   initialized = true;
 
   b2BodyDef body_def = createBodyDef();
   // Set initial position of bot body definition
-  body_def.position.Set(calculateDistance(0, 5), y_distance);
+  body_def.position.Set(calculateDistance(0, bone_width / 2.f), y_distance);
 
   b2PolygonShape body_shape = createBodyShape();
   b2FixtureDef body_fixture = createBodyFixtureDef(&body_shape);
 
-  b2Body* first_body = world->CreateBody(&body_def);
+  b2Body* first_body = world.CreateBody(&body_def);
   first_body->CreateFixture(&body_fixture);
 
   bones[0] = first_body;
   for (unsigned int i = 1; i < bone_amount; ++i) {
-    body_def.position.Set(calculateDistance(i, 5), y_distance);
-    b2Body* body = world->CreateBody(&body_def);
+    body_def.position.Set(calculateDistance(i, bone_width / 2.f), y_distance);
+    b2Body* body = world.CreateBody(&body_def);
     body->CreateFixture(&body_fixture);
     bones[i] = body;
 
     b2RevoluteJointDef joint_def = createJoint(i);
-    joints[i - 1] = (b2RevoluteJoint*) world->CreateJoint(&joint_def);
+    joints[i - 1] = (b2RevoluteJoint*) world.CreateJoint(&joint_def);
   }
 }

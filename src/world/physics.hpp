@@ -1,7 +1,12 @@
 #ifndef Q_LEARNING_PHYSICS_HPP
 #define Q_LEARNING_PHYSICS_HPP
 
+#include <memory>
+
 #include "Box2D/Box2D.h"
+
+#define PHYSICS_ENGINE_DEFAULT_WORLD_POSITION_X 10.f
+#define PHYSICS_ENGINE_DEFAULT_TIME_STEP 60.f
 
 
 class PhysicsEngine {
@@ -11,26 +16,30 @@ class PhysicsEngine {
      * @param world_pos x position of the ground
      * @param time_step time step size used in world simulation
      */
-    explicit PhysicsEngine(float world_pos = 10.f, float32 time_step = 60.f);
+    explicit PhysicsEngine(
+        float world_pos = PHYSICS_ENGINE_DEFAULT_WORLD_POSITION_X,
+        float32 time_step = PHYSICS_ENGINE_DEFAULT_TIME_STEP);
 
     /**
-     * PhysicsEngine destructor.
-     * Takes care of deleting the world object.
-     *
-     * The ground object has a private destructor.
+     * Alters the time step of this engine by the input amount.
+     * Bounds are checked, the final time step should be within [1.f, 1000.f]
+     * @param time_step_change change of time step
      */
-    ~PhysicsEngine();
+    void alterTimeStep(float32 time_step_change);
+
+    /** Method for resetting the time step back to default value. */
+    void resetTimeStep();
 
     /**
      * Getter for the Box2D world.
      * @return pointer to world
      */
-    b2World* getWorld() const;
+    b2World& getWorld() const;
     /**
      * Getter for the Box2D ground.
      * @return pointer to the ground
      */
-    b2Body* getGround() const;
+    b2Body& getGround() const;
 
     /**
      * Getter for the dimensions of the ground.
@@ -43,7 +52,7 @@ class PhysicsEngine {
 
  private:
     // Pointer to the simulated world
-    b2World* world;
+    std::shared_ptr<b2World> world;
     // Pointer to the ground body
     b2Body* ground_body;
 

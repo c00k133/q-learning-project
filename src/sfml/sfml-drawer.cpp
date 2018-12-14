@@ -4,7 +4,8 @@
 #include "body-exceptions.hpp"
 
 
-SFMLDrawer::SFMLDrawer(sf::RenderWindow* window) : window(window) {
+SFMLDrawer::SFMLDrawer(std::shared_ptr<sf::RenderWindow> _window) {
+  window = std::move(_window);
   font = getFont();
 }
 
@@ -13,19 +14,17 @@ void SFMLDrawer::setScale(float new_scale) {
 }
 
 void SFMLDrawer::drawGround(
-        b2Body* ground_body,
+        const b2Body& ground_body,
         float ground_x_dimension,
         float ground_y_dimension,
-        sf::Color color) {
-
+        sf::Color color) const {
   // Get and scale ground dimensions
-  float ground_width = ground_x_dimension * scale;
-  float ground_height = (ground_y_dimension + 10) * scale;
+  const float ground_width = ground_x_dimension * scale;
+  const float ground_height = (ground_y_dimension + 12) * scale;
   // FIXME(Cookie): localize calculations of ground dimensions
-  //float ground_height = ground_y_dimension * scale;
 
   // Get fixture list head
-  b2Fixture *fixture = ground_body->GetFixtureList();
+  const b2Fixture *fixture = ground_body.GetFixtureList();
 
   // Loop through list until list end
   while (fixture) {
@@ -36,10 +35,10 @@ void SFMLDrawer::drawGround(
     // Set origin to the middle point of the shape
     ground.setOrigin(ground_width / 2.f, ground_height / 2.f);
     // FIXME(Cookie): check if ground needs to be rotated
-    //ground.setRotation(ground_body->GetAngle() * 180 / b2_pi);
+    //ground.setRotation(ground_body.GetAngle() * 180 / b2_pi);
 
     // Get, scale, and set ground position
-    const b2Vec2 ground_position = ground_body->GetPosition();
+    const b2Vec2 ground_position = ground_body.GetPosition();
     const float32 x_position = ground_position.x * scale;
     const float32 y_position = ground_position.y * scale;
     ground.setPosition(x_position, y_position);
@@ -53,18 +52,19 @@ void SFMLDrawer::drawGround(
 }
 
 void SFMLDrawer::drawGround(
-        b2Body *ground_body,
+        const b2Body& ground_body,
         b2Vec2 ground_dimensions,
-        sf::Color color) {
-
+        sf::Color color) const {
   // Explode b2Vec2 `ground_dimensions`
   drawGround(
           ground_body, ground_dimensions.x, ground_dimensions.y, color);
 }
 
- void SFMLDrawer::drawWorm(WormBrain* worm) {
+void SFMLDrawer::drawWorm(const WormBrain& worm) const {
   // Get WormBody object out of `worm`
-  const WormBody* worm_body = worm->getBody();
+  const std::shared_ptr<WormBody> worm_body = worm.getBody();
+  // Get color from worm body
+  sf::Color body_color = worm_body->getBodyColor();
 
   // Get shape of bones from `worm`, used in loop below
   std::tuple<float, float> bone_dimensions = worm_body->getBoneDimensions();
@@ -83,8 +83,7 @@ void SFMLDrawer::drawGround(
         sf::RectangleShape
                 bone_shape(sf::Vector2f(bone_width, bone_length));
 
-        // Get and set color from `worm`
-        sf::Color body_color = worm_body->getBodyColor();
+        // Set color from `worm`
         bone_shape.setFillColor(body_color);
 
         // Set initial position based on the shape of `worm`
@@ -143,45 +142,46 @@ void SFMLDrawer::drawTicks(
         float ground_width,
         unsigned int separation,
         unsigned int text_size,
-        float tick_y_position) {
+        float tick_y_position) const {
+  // Styling of ticks
+  sf::Text ticks;
+  ticks.setFont(font);
+  ticks.setCharacterSize(text_size);
+  ticks.setColor(text_color);
 
-   // Styling of ticks
-   sf::Text ticks;
-   ticks.setFont(font);
-   ticks.setCharacterSize(text_size);
-   ticks.setColor(text_color);
-
-   // Draw tick numbers on ground at `separation` intervals
-   for (unsigned int i = 0; i < ground_width / separation; ++i) {
-     const int tick_number = i * separation;
-     // Draw negative tick marks
-     ticks.setString(std::to_string(-tick_number));
-     ticks.setPosition(sf::Vector2f(-tick_number * scale, tick_y_position));
-     window->draw(ticks);
-     // Draw positive tick marks
-     ticks.setString(std::to_string(tick_number));
-     ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
-     window->draw(ticks);
-   }
+  // Draw tick numbers on ground at `separation` intervals
+  for (unsigned int i = 0; i < ground_width / separation; ++i) {
+    const int tick_number = i * separation;
+    // Draw negative tick marks
+    ticks.setString(std::to_string(-tick_number));
+    ticks.setPosition(sf::Vector2f(-tick_number * scale, tick_y_position));
+    window->draw(ticks);
+    // Draw positive tick marks
+    ticks.setString(std::to_string(tick_number));
+    ticks.setPosition(sf::Vector2f(tick_number * scale, tick_y_position));
+    window->draw(ticks);
+  }
 }
 
 void SFMLDrawer::drawWormInformation(
-    WormBrain *worm, sf::Vector2f position, unsigned int text_size) {
+    const WormBrain& worm,
+    sf::Vector2f position,
+    unsigned int text_size) const {
   sf::Text information;
   information.setFont(font);
   information.setCharacterSize(text_size);
   information.setColor(text_color);
 
   // Set string indicator if worm is acting randomly or not
-  std::string random_act = worm->getRandomAct() ? "(R)" : "(O)";
+  std::string random_act = worm.getRandomAct() ? "(R)" : "(O)";
 
   // String stream for string formatting
   std::stringstream worm_information;
 
-  worm_information << worm->getName() << random_act << " - ";
-  worm_information << "iterations: " << worm->getCount();
+  worm_information << worm.getName() << random_act << " - ";
+  worm_information << "iterations: " << worm.getCount();
   worm_information << "\nx position: ";
-  const float worm_x_position = worm->getBodyCoordinatesVector().x;
+  const float worm_x_position = worm.getBodyCoordinatesVector().x;
   worm_information << std::fixed << std::setprecision(2) << worm_x_position;
 
   information.setString(worm_information.str());

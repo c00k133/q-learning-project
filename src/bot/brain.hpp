@@ -1,6 +1,10 @@
 #ifndef Q_LEARNING_BRAIN_HPP
 #define Q_LEARNING_BRAIN_HPP
 
+#include <memory>
+#include <tuple>
+#include <string>
+
 #include "body.hpp"
 #include "qlearning.hpp"
 #include "Box2D/Box2D.h"
@@ -49,18 +53,11 @@ class WormBrain {
      *                  to WORMBRAIN_DEFAULT_MAX_ERROR
      */
     WormBrain(
-            b2World* world,
+            b2World& world,
             int precision,
             unsigned int bone_amount = WORMBRAIN_DEFAULT_BONE_AMOUNT,
             float max_error = WORMBRAIN_DEFAULT_MAX_ERROR,
             std::string name = WORMBRAIN_DEFAULT_NAME);
-
-    /**
-     * WormBrain destructor.
-     *
-     * Takes care of releasing body and q-learning allocated memory.
-     */
-    ~WormBrain();
 
     /**
      * Updates the state of the whole worm based on actions.
@@ -86,15 +83,15 @@ class WormBrain {
 
     /**
      * Getter for the WormBody.
-     * @return a const pointer to the WormBody.
+     * @return a const shared pointer to the WormBody.
      */
-    const WormBody* getBody() const;
+    const std::shared_ptr<WormBody> getBody() const;
 
     /**
      * Getter for private count variable.
      * @return count value
      */
-    int getCount();
+    int getCount() const;
 
     /**
      * Getter for private name.
@@ -139,6 +136,18 @@ class WormBrain {
      * @param file_name name of output file, if none given one will be created
      */
     void save(std::string file_name = nullptr);
+    // TODO(Cookie): implement save feature
+
+    /**
+     * Method for altering the move reward of the companion QLearning object.
+     * @param move_reward_change change amount of q learning move reward
+     */
+    void alterQLearningMoveReward(float move_reward_change);
+
+    /**
+     * Method for resetting the move reward of the QLearning companion object.
+     */
+    void resetQLearningMoveReward();
 
  private:
     /**
@@ -178,8 +187,8 @@ class WormBrain {
     // When doing this the worm stops being lazy and moves properly
     std::tuple<unsigned int, float> saved_angle = std::make_tuple(0, 0.f);
 
-    WormBody* body;  // Controlled bot body object
-    QLearning* qLearning;  // Queried Q learning object
+    std::shared_ptr<WormBody> body;  // Controlled bot body object
+    std::unique_ptr<QLearning> qLearning;  // Queried Q learning object
 
     std::string name;  // Name of this worm
 

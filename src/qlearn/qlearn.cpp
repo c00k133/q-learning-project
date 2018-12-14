@@ -2,17 +2,16 @@
 
 
 void QLearn::init() {
-  window = new sf::RenderWindow(
-      sf::VideoMode(window_width, window_height), heading);
+  sf::VideoMode video_mode(window_width, window_height);
+  window = std::make_shared<sf::RenderWindow>(video_mode, heading);
   window->setFramerateLimit(framerate_limit);
 
   // Set companion object
-  drawer = new SFMLDrawer(window);
+  drawer = std::unique_ptr<SFMLDrawer>(new SFMLDrawer(window));
   drawer->setScale(scale);
 
   // Set master worm, used for centering camera.
-  master_worm = createWormBrain(20, 4, "Master");
-  worms.push_back(master_worm);
+  worms.push_back(std::shared_ptr<WormBrain>(createWormBrain(20, 4, "Master")));
 
   view = sf::View(
       sf::Vector2f(0, 0), sf::Vector2f(window_width, window_height));
@@ -49,13 +48,6 @@ QLearn::QLearn(unsigned int amount,
   insertToWorms(amount, worm_type);
 }
 
-QLearn::~QLearn() {
-  // Delete each worm
-  for (auto worm : worms) {
-    delete worm;
-  }
-}
-
 inline WormBrain* QLearn::createWormBrain(
         int precision, unsigned int bone_amount, std::string name) const {
   return new WormBrain(
@@ -66,11 +58,16 @@ inline WormBrain* QLearn::createWormBrain(
           name);
 }
 
-WormBrain* QLearn::createWormType(QLearnUtils::WormType& worm_type) const {
+WormBrain* QLearn::createWormType(
+    const QLearnUtils::WormType& worm_type) const {
   WormBrain* worm = createWormBrain(
           worm_type.precision, worm_type.bone_amount, worm_type.name);
   worm->setBodyColor(worm_type.color);
   return worm;
+}
+
+inline std::shared_ptr<WormBrain> QLearn::getMasterWorm() const {
+  return worms[master_worm_index];
 }
 
 void QLearn::insertToWorms(
@@ -79,7 +76,7 @@ void QLearn::insertToWorms(
   for (unsigned int i = 0; i < amount; ++i) {
     worm_type.name = original_name + std::to_string(i + 1);
     WormBrain* worm = createWormType(worm_type);
-    worms.push_back(worm);
+    worms.push_back(std::shared_ptr<WormBrain>(worm));
   }
 }
 
@@ -106,15 +103,15 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
       if (follow_master) {
         follow_master = false;
         const float current_master_x =
-            master_worm->getBodyCoordinatesVector().x;
+            getMasterWorm()->getBodyCoordinatesVector().x;
         camera_offset = scaleValue(current_master_x);
       }
       camera_offset += key_press == sf::Keyboard::Right ?
           QLEARN_CAMERA_OFFSET_INCREMENT : -QLEARN_CAMERA_OFFSET_INCREMENT;
       break;
 
-    case sf::Keyboard::Up: case sf::Keyboard::Down: {
-      const float increment = 1.f + (key_press == sf::Keyboard::Up ?
+    case sf::Keyboard::Add: case sf::Keyboard::Subtract: {
+      const float increment = 1.f + (key_press == sf::Keyboard::Add ?
           -QLEARN_CAMERA_ZOOM_INCREMENT : QLEARN_CAMERA_ZOOM_INCREMENT);
       view.zoom(increment);
       zoom_value *= increment;
@@ -122,10 +119,21 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
     }
 
     case sf::Keyboard::Space:
+      // Fix camera to original values
       camera_offset = 0.f;
       follow_master = true;
+
+      // Reset the zoom value of the view
       view.zoom(1.f / zoom_value);
       zoom_value = 1.f;
+
+      // Reset engine time step
+      engine.resetTimeStep();
+
+      // Reset master worm variables
+      getMasterWorm()->getBody()->resetMaxMotorTorque();
+      getMasterWorm()->getBody()->resetMotorSpeed();
+      getMasterWorm()->resetQLearningMoveReward();
       break;
 
     case sf::Keyboard::Escape:
@@ -142,23 +150,53 @@ void QLearn::keyPressEventHandler(sf::Keyboard::Key key_press) {
             (master_worm_index + 1) % (unsigned int) worms.size();
       else
         master_worm_index = master_worm_index - 1 < 0 ?
-            (int) worms.size() - 1 : master_worm_index - 1;
-
-      master_worm = worms[master_worm_index];
+            static_cast<int>(worms.size()) - 1 : master_worm_index - 1;
       break;
 
-    case sf::Keyboard::R:
+    case sf::Keyboard::R: {
+      const bool random_act = getMasterWorm()->getRandomAct();
       // Invert randomness of master worm
-      master_worm->setRandomActs(!master_worm->getRandomAct());
+      getMasterWorm()->setRandomActs(!random_act);
       break;
+    }
 
     case sf::Keyboard::P:
       run_physics = !run_physics;
       break;
 
-    // TODO(Cookie): add possibility to change motor speed, motor torque,
-    //               friction, simulation speed, and possibility to jump
-    //               into the future with simulations
+    case sf::Keyboard::A: case sf::Keyboard::S: {
+      const float32 change = key_press == sf::Keyboard::A ? -1.f : 1.f;
+      engine.alterTimeStep(change);
+      break;
+    }
+
+    case sf::Keyboard::Q: {
+      const bool original_run_physics = run_physics;
+      run_physics = true;
+      for (unsigned int i = 0; i < 1000; ++i) {
+        advanceWorld();
+      }
+      run_physics = original_run_physics;
+      break;
+    }
+
+    case sf::Keyboard::Z: case sf::Keyboard::X: {
+      const float change = key_press == sf::Keyboard::Z ? 1000.f : -1000.f;
+      getMasterWorm()->getBody()->alterMaxMotorTorque(change);
+      break;
+    }
+
+    case sf::Keyboard::C: case sf::Keyboard::V: {
+      const float change = key_press == sf::Keyboard::C ? -0.1f : 0.1f;
+      getMasterWorm()->getBody()->alterMotorSpeed(change);
+      break;
+    }
+
+    case sf::Keyboard::W: case sf::Keyboard::E: {
+      const float change = key_press == sf::Keyboard::W ? 0.05f : -0.05f;
+      getMasterWorm()->alterQLearningMoveReward(change);
+      break;
+    }
 
     default:
       break;
@@ -184,18 +222,21 @@ void QLearn::eventHandler() {
 }
 
 void QLearn::processWorms() {
-  // We process each worm with dynamic parallelism
   // One process might take longer than others depending on precision
-  #pragma omp parallel for schedule(dynamic, 1)
   for (auto worm = worms.begin(); worm < worms.end(); ++worm) {
     (*worm)->process();
   }
+
+  // NOTE: we attempted to use parallelism here through openmp, but
+  //       unfortunately it introduced valgrind errors "possibly lost".
+  //       This might have been a false positive, but we are staying on the
+  //       on the safe side and ignoring parallelism for now.
 }
 
 void QLearn::drawComponents() {
   // Drawing of worms happen sequentially, drawing in parallel breaks SFML
-  for (auto worm : worms) {
-    drawer->drawWorm(worm);
+  for (const auto& worm : worms) {
+    drawer->drawWorm(*worm);
   }
 
   // Draw the ground based on PhysicsEngine
@@ -212,13 +253,13 @@ void QLearn::drawComponents() {
   const float y_dimension = view.getSize().y / 2 - 53 * scale;
   auto information_position =
       view.getCenter() - sf::Vector2f(x_dimension, y_dimension);
-  drawer->drawWormInformation(master_worm, information_position);
+  drawer->drawWormInformation(*getMasterWorm(), information_position);
 }
 
 void QLearn::setViewCenter() {
   float x_view;
   if (follow_master) {
-    auto master_coordinates = master_worm->getBodyCoordinatesVector();
+    auto master_coordinates = getMasterWorm()->getBodyCoordinatesVector();
     x_view = scaleValue(master_coordinates.x);
   } else {
     x_view = camera_offset;

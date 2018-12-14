@@ -1,6 +1,10 @@
 #ifndef Q_LEARNING_Q_LEARN
 #define Q_LEARNING_Q_LEARN
 
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "sfml-drawer.hpp"
 #include "physics.hpp"
 #include "brain.hpp"
@@ -26,7 +30,7 @@ namespace QLearnUtils {
         sf::Color color;
         std::string name;
     };
-}
+}  // namespace QLearnUtils
 
 
 class QLearn {
@@ -59,12 +63,6 @@ class QLearn {
         unsigned int window_width = QLEARN_DEFAULT_WINDOW_WIDTH,
         unsigned int window_height = QLEARN_DEFAULT_WINDOW_HEIGHT);
 
-    /**
-     * QLearn destructor, takes care of deleting all allocate memory.
-     * E.g. all WormBrain objects.
-     */
-    ~QLearn();
-
     /** Run and loop the whole program. */
     void run();
 
@@ -88,7 +86,13 @@ class QLearn {
      * @param worm_type the flavor fo the WormBrain
      * @return pointer to newly created WormBrain flavor
      */
-    WormBrain* createWormType(QLearnUtils::WormType& worm_type) const;
+    WormBrain* createWormType(const QLearnUtils::WormType& worm_type) const;
+
+    /**
+     * Wrapper method for extracting master worm from `worms` vector.
+     * @return pointer to master worm
+     */
+    inline std::shared_ptr<WormBrain> getMasterWorm() const;
 
     /**
      * Insert a certain amount of WormBrains with `worm_type` flavor to vector
@@ -135,15 +139,15 @@ class QLearn {
      */
     inline void advanceWorld();
 
-    sf::RenderWindow* window;  // SFML window where the action happens
+    // SFML window where the action happens
+    std::shared_ptr<sf::RenderWindow> window;
     sf::View view;  // View used in addition to window
 
-    SFMLDrawer* drawer;  // Companion SFMLDrawer object
+    std::unique_ptr<SFMLDrawer> drawer;  // Companion SFMLDrawer object
     PhysicsEngine engine;  // The physics engine for this specific instance
 
     int master_worm_index = 0;  // Index of master worm in `worms`
-    WormBrain* master_worm;  // Master worm which the SFML view defaults to
-    std::vector<WormBrain*> worms;  // All saved worm instances
+    std::vector<std::shared_ptr<WormBrain>> worms;  // All saved worm instances
 
     std::string heading;  // Title heading of the created SFML window
 
@@ -151,7 +155,7 @@ class QLearn {
     bool follow_master = true;  // Should the view follow the master worm?
     float camera_offset = 0.f;  // X offset of camera in SFML window
 
-    float zoom_value = 1.f;
+    float zoom_value = 1.f;  // Zoom increment value, used to reset zoom
     float scale = 10.f;  // Scaling of drawings on the SFML window
     unsigned int window_width;  // SFML window width
     unsigned int window_height;  // SFML window height

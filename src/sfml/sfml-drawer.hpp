@@ -4,6 +4,9 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <memory>
+#include <vector>
+#include <string>
 #include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"
@@ -17,12 +20,14 @@
 
 /** Companion class for QLearn objects. */
 class SFMLDrawer {
-public:
+ public:
     /**
      * Constructor for SFMLDrawer.
      * Draws chosen methods on input window.
      */
-    explicit SFMLDrawer(sf::RenderWindow *window);
+    explicit SFMLDrawer(std::shared_ptr<sf::RenderWindow> window);
+
+    ~SFMLDrawer() = default;
 
     /**
      * Setter for scale used in scaling drawings on `window`.
@@ -38,10 +43,10 @@ public:
      * @param color color for ground, defaults to
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
-    void drawGround(b2Body *ground_body,
+    void drawGround(const b2Body& ground_body,
                     float ground_x_dimension,
                     float ground_y_dimension,
-                    sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+                    sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR) const;
 
     /**
      * Draw input ground onto `window`, dimensions as b2Vec2.
@@ -51,15 +56,15 @@ public:
      *              SFML_DRAWER_DEFAULT_GROUND_COLOR
      */
     void drawGround(
-            b2Body *ground_body,
+            const b2Body& ground_body,
             b2Vec2 ground_dimensions,
-            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR);
+            sf::Color color = SFML_DRAWER_DEFAULT_GROUND_COLOR) const;
 
     /**
      * Draw one worm at a time.
      * @param worm input worm to be drawn
      */
-    void drawWorm(WormBrain* worm);
+    void drawWorm(const WormBrain& worm) const;
 
     /**
      * Draw ground ticks for distance measurement.
@@ -73,7 +78,7 @@ public:
             float ground_width,
             unsigned int separation = SFML_DRAWER_DEFAULT_SEPARATION,
             unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE,
-            float tick_y_position = SFML_DRAWER_DEFAULT_TICK_Y_POSITION);
+            float tick_y_position = SFML_DRAWER_DEFAULT_TICK_Y_POSITION) const;
 
     /**
      * Draw information about a specific worm onto the SFML window.
@@ -81,11 +86,11 @@ public:
      * @param position position of information as a sf::Vector2f
      */
     void drawWormInformation(
-        WormBrain* worm,
+        const WormBrain& worm,
         sf::Vector2f position,
-        unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE);
+        unsigned int text_size = SFML_DRAWER_DEFAULT_TEXT_SIZE) const;
 
-private:
+ private:
     // TODO(Cookie): move this to a utility library
     /**
      * Helper method for checking if file exists.
@@ -103,7 +108,7 @@ private:
     sf::Font font;
 
     // Window onto which everything is drawn
-    sf::RenderWindow *window;
+    std::shared_ptr<sf::RenderWindow> window;
     // Scaling of objects on window
     float scale = 1.f;
 

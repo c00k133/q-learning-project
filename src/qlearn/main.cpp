@@ -28,7 +28,7 @@ bool withArguments(char* argv[]) {
     return false;
   }
 
-  QLearn q_learn = QLearn(amount, precision, bone_amount);
+  QLearn q_learn(amount, precision, bone_amount);
   q_learn.run();
 
   return true;

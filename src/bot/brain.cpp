@@ -22,25 +22,21 @@ WormBrain::WormBrain(
 }
 
 WormBrain::WormBrain(
-        b2World *world,
+        b2World& world,
         int precision,
         unsigned int bone_amount,
         float max_error,
         std::string name) {
   init(precision, max_error, name);
 
-  body = new WormBody(world, bone_amount);
+  body = std::make_shared<WormBody>(world, bone_amount);
   auto joint_amount = body->getJointAmount();
   auto states = (unsigned int) pow(precision, joint_amount);
-  qLearning = new QLearning(states, 1 + joint_amount * 2);
+  qLearning =
+      std::unique_ptr<QLearning>(new QLearning(states, 1 + joint_amount * 2));
 }
 
-WormBrain::~WormBrain() {
-  delete body;
-  delete qLearning;
-}
-
-int WormBrain::getCount() {
+int WormBrain::getCount() const {
   return count;
 }
 
@@ -69,6 +65,14 @@ void WormBrain::setBodyOutlineColor(sf::Color outline_color) {
   body->setBodyOutlineColor(outline_color);
 }
 
+void WormBrain::alterQLearningMoveReward(float move_reward_change) {
+  qLearning->alterMoveReward(move_reward_change);
+}
+
+void WormBrain::resetQLearningMoveReward() {
+  qLearning->resetMoveReward();
+}
+
 const b2Vec2 WormBrain::getBodyCoordinatesVector() const {
   return body->getCoordinatesVector();
 }
@@ -77,9 +81,10 @@ const std::tuple<float, float> WormBrain::getBodyCoordinatesTuple() const {
   return body->getCoordinatesTuple();
 }
 
-const WormBody* WormBrain::getBody() const {
+const std::shared_ptr<WormBody> WormBrain::getBody() const {
   return body;
 }
+
 
 unsigned int WormBrain::updateState(unsigned int state, unsigned int action) {
   // 0 == take no action

@@ -4,9 +4,17 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <string>
 #include <SFML/Graphics.hpp>
 
 #include "Box2D/Box2D.h"
+
+#define WORMBODY_DEFAULT_BONE_COLOR sf::Color(255, 102, 102)
+#define WORMBODY_DEFAULT_OUTLINE_COLOR sf::Color::Black
+#define WORMBODY_DEFAULT_BONE_WIDTH 10.f
+#define WORMBODY_DEFAULT_BONE_LENGTH 2.f
+#define WORMBODY_DEFAULT_MAX_MOTOR_TORQUE 100000.f
+#define WORMBODY_DEFAULT_MOTOR_SPEED 0.5f
 
 
 class WormBody {
@@ -23,7 +31,7 @@ class WormBody {
      * @param world the world in which this body exists
      * @param bone_amount amount of bones in this worm, minimum 1, default 3
      */
-    explicit WormBody(b2World* world, unsigned int bone_amount = 3);
+    explicit WormBody(b2World& world, unsigned int bone_amount = 3);
 
     /**
      * Getter for amount of bones in this WormBody.
@@ -111,11 +119,34 @@ class WormBody {
     const std::tuple<float, float> getBoneDimensions() const;
 
     /**
+     * Method for changing the maximum motor torque for each joint.
+     * Has to stay within bounds of [1.f, 1000000.f].
+     * @param motor_torque_change change in maximum motor torque
+     */
+    void alterMaxMotorTorque(float motor_torque_change);
+
+    /**
+     * Method for resetting the maximum motor torque for each joint to the
+     * default.
+     */
+    void resetMaxMotorTorque();
+
+    /**
+     * Method for changing the motor speed for each joint.
+     * Has to stay within bounds of [0.01f, 100.f].
+     * @param motor_speed_change change in motor speed
+     */
+    void alterMotorSpeed(float motor_speed_change);
+
+    /** Method for resetting the motor speed of joint to the default value. */
+    void resetMotorSpeed();
+
+    /**
      * Method for creating all body parts of this WormBody object.
      * Includes the creation of all bones and connecting joints.
      * @param world world in which these body parts exist
      */
-    void createBodyParts(b2World* world);
+    void createBodyParts(b2World& world);
 
  private:
     /**
@@ -154,7 +185,8 @@ class WormBody {
      * @param offset offset from origin of whole body
      * @return calculated distance
      */
-    inline int calculateDistance(unsigned int index, int offset = 0) const;
+    inline float32 calculateDistance(
+        unsigned int index, float offset = 0) const;
 
     /**
      * Method for checking if this worm body has been initialized.
@@ -176,13 +208,20 @@ class WormBody {
     unsigned int bone_amount;
 
     // Color of all bones in this body
-    sf::Color body_color = sf::Color(255, 102, 102);
+    sf::Color body_color = WORMBODY_DEFAULT_BONE_COLOR;
     // Outline color of all bones in this body
-    sf::Color body_outline_color = sf::Color::Black;
+    sf::Color body_outline_color = WORMBODY_DEFAULT_OUTLINE_COLOR;
+
+    // Box2D maximum motor torque
+    float max_motor_torque = WORMBODY_DEFAULT_MAX_MOTOR_TORQUE;
+    // Box2D motor speed for each joint motor
+    float motor_speed = WORMBODY_DEFAULT_MOTOR_SPEED;
 
     /* Static const values common for all worm bodies. */
-    static constexpr float bone_width = 10.f;  // Width of each bone
-    static constexpr float bone_length = 2.f;  // Length of each bone
+    // Width of each bone
+    static constexpr float bone_width = WORMBODY_DEFAULT_BONE_WIDTH;
+    // Length of each bone
+    static constexpr float bone_length = WORMBODY_DEFAULT_BONE_LENGTH;
 
     /* Static const values for Box2D usage. */
     static constexpr float density = 1.f;  // Box2D density for each bone
@@ -191,18 +230,14 @@ class WormBody {
     static constexpr float linear_damping = 0.f;
     // Box2D angular damping for each joint motor
     static constexpr float angular_damping = 0.01f;
-    // Box2D motor speed for each joint motor
-    static constexpr float motor_speed = 0.5f;
-    // Box2D maximum motor torque
-    static constexpr float max_motor_torque = 200000.f;
     // Y offset for Box2D body definitions
     static constexpr float y_distance = 0.f;
     // Initial x position of Box2D body definitions
     static constexpr float x_position = -15.f;
     // Box2D collision category bits
-    static constexpr int category_bits = 1;
+    static constexpr int category_bits = 0x1;
     // Box2D collision mask bits
-    static constexpr int mask_bits = 2;
+    static constexpr int mask_bits = 0x2;
 };
 
 #endif
