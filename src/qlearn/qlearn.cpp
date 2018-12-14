@@ -250,7 +250,7 @@ void QLearn::drawComponents() {
   // Draw information about the current master worm
   // TODO(Cookie): find a better way to calculate these
   const float x_dimension = view.getSize().x / 2 - 3 * scale;
-  const float y_dimension = view.getSize().y / 2 - 3 * scale;
+  const float y_dimension = view.getSize().y / 2 - 53 * scale;
   auto information_position =
       view.getCenter() - sf::Vector2f(x_dimension, y_dimension);
   drawer->drawWormInformation(*getMasterWorm(), information_position);
