@@ -20,7 +20,7 @@ void SFMLDrawer::drawGround(
         sf::Color color) const {
   // Get and scale ground dimensions
   const float ground_width = ground_x_dimension * scale;
-  const float ground_height = (ground_y_dimension + 12) * scale;
+  const float ground_height = (ground_y_dimension + 10) * scale;
   // FIXME(Cookie): localize calculations of ground dimensions
 
   // Get fixture list head
@@ -171,6 +171,8 @@ void SFMLDrawer::drawWormInformation(
   information.setFont(font);
   information.setCharacterSize(text_size);
   information.setColor(text_color);
+  information.setOutlineThickness(2.f);
+  information.setOutlineColor(sf::Color::Black);
 
   // Set string indicator if worm is acting randomly or not
   std::string random_act = worm.getRandomAct() ? "(R)" : "(O)";
