@@ -185,7 +185,8 @@ class WormBody {
      * @param offset offset from origin of whole body
      * @return calculated distance
      */
-    inline int calculateDistance(unsigned int index, int offset = 0) const;
+    inline float32 calculateDistance(
+        unsigned int index, float offset = 0) const;
 
     /**
      * Method for checking if this worm body has been initialized.
@@ -234,9 +235,9 @@ class WormBody {
     // Initial x position of Box2D body definitions
     static constexpr float x_position = -15.f;
     // Box2D collision category bits
-    static constexpr int category_bits = 1;
+    static constexpr int category_bits = 0x1;
     // Box2D collision mask bits
-    static constexpr int mask_bits = 2;
+    static constexpr int mask_bits = 0x2;
 };
 
 #endif

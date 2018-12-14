@@ -20,7 +20,7 @@ void SFMLDrawer::drawGround(
         sf::Color color) const {
   // Get and scale ground dimensions
   const float ground_width = ground_x_dimension * scale;
-  const float ground_height = (ground_y_dimension + 10) * scale;
+  const float ground_height = (ground_y_dimension + 12) * scale;
   // FIXME(Cookie): localize calculations of ground dimensions
 
   // Get fixture list head
@@ -35,7 +35,7 @@ void SFMLDrawer::drawGround(
     // Set origin to the middle point of the shape
     ground.setOrigin(ground_width / 2.f, ground_height / 2.f);
     // FIXME(Cookie): check if ground needs to be rotated
-    //ground.setRotation(ground_body->GetAngle() * 180 / b2_pi);
+    //ground.setRotation(ground_body.GetAngle() * 180 / b2_pi);
 
     // Get, scale, and set ground position
     const b2Vec2 ground_position = ground_body.GetPosition();
@@ -63,6 +63,8 @@ void SFMLDrawer::drawGround(
 void SFMLDrawer::drawWorm(const WormBrain& worm) const {
   // Get WormBody object out of `worm`
   const std::shared_ptr<WormBody> worm_body = worm.getBody();
+  // Get color from worm body
+  sf::Color body_color = worm_body->getBodyColor();
 
   // Get shape of bones from `worm`, used in loop below
   std::tuple<float, float> bone_dimensions = worm_body->getBoneDimensions();
@@ -81,8 +83,7 @@ void SFMLDrawer::drawWorm(const WormBrain& worm) const {
         sf::RectangleShape
                 bone_shape(sf::Vector2f(bone_width, bone_length));
 
-        // Get and set color from `worm`
-        sf::Color body_color = worm_body->getBodyColor();
+        // Set color from `worm`
         bone_shape.setFillColor(body_color);
 
         // Set initial position based on the shape of `worm`
